@@ -3,13 +3,17 @@
     width: 224px;
     .menu-item {
         margin-left: 0;
-        font-family: 'IBM Plex Sans', sans-serif;
-        color: var(--black);
+        font-family: var(--font-family);
+        font-weight: 600;
     }
 }
 
 .menu-popper {
     padding-bottom: 8px;
+}
+
+.menu-body {
+    overflow-y: auto;
 }
 
 .menu-item {
@@ -18,7 +22,39 @@
     border-radius: 0;
     font-weight: 500;
     padding: 11px 16px;
+    line-height: 1.8rem;
+    &.separate {
+        border-top: solid 1px rgba(22, 24, 35, 0.12);
+    }
     &:hover {
         background: rgba(22, 24, 35, 0.03);
     }
+}
+
+// Header
+
+.menu-header {
+    position: relative;
+    height: 50px;
+    margin-top: -8px;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.btn-back {
+    position: relative;
+    width: 50px;
+    height: 100%;
+    cursor: pointer;
+    background-color: transparent;
+    font-size: 1.8rem;
+    padding: 0;
+}
+
+.header-title {
+    position: absolute;
+    font-size: 1.8rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

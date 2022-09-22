@@ -1,30 +1,35 @@
+import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import styles from './AccountItem.module.scss';
+import Image from '~/components/Image';
 
 const cx = classNames.bind(styles);
 
-function AccountItem() {
+function AccountItem({ data }) {
     return (
-        <div className={cx('wrapper')}>
-            <img
-                className={cx('avatar')}
-                src="https://scontent-hkg4-2.xx.fbcdn.net/v/t39.30808-6/301264677_1702038363505540_800329165601559843_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=aksntSwIHKsAX-L7QEV&_nc_ht=scontent-hkg4-2.xx&oh=00_AT_CvrnOd8IhRK5UimilyglU2vL84BiFmsCI9B8YVQdCEw&oe=632B10FC"
-                alt="name"
-            />
+        <Link to={`/@${data.nickname}`} className={cx('wrapper')}>
+            <Image className={cx('avatar')} src={data.avatar} alt="name" />
             <div className={cx('info')}>
                 <h4 className={cx('name')}>
-                    Nguyen Van A
-                    <FontAwesomeIcon
-                        icon={faCheckCircle}
-                        className={cx('icon')}
-                    />
+                    {data.full_name}
+                    {data.tick && (
+                        <FontAwesomeIcon
+                            icon={faCheckCircle}
+                            className={cx('icon')}
+                        />
+                    )}
                 </h4>
-                <span className={cx('username')}>ngueynvana</span>
+                <span className={cx('username')}>{data.nickname}</span>
             </div>
-        </div>
+        </Link>
     );
 }
+
+AccountItem.propTypes = {
+    data: PropTypes.object.isRequired,
+};
 
 export default AccountItem;

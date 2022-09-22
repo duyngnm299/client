@@ -7,6 +7,8 @@
     padding: 9px 16px;
     border-radius: 4px;
     font-weight: 700;
+    color: #161823;
+    font-family: var(--font-family);
     cursor: pointer;
     background-color: var(--white);
     border: 1px solid transparent;
@@ -72,6 +74,11 @@
 .text {
     border-color: rgba(22, 24, 35, 0.12);
     border-radius: 2px;
+    padding: 8px 14px;
+    color: #41434c;
+    font-weight: 600;
+    font-family: var(--font-family);
+
     &:hover {
         background-color: rgba(22, 24, 35, 0.03);
     }
