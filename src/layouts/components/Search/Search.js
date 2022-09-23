@@ -5,23 +5,23 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleXmark, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { Wrapper as PopperWrapper } from '~/components/Popper';
 
-import AccountItem from '~/components/AccountItem';
 import styles from './Search.module.scss';
 import { SearchIcon } from '~/components/Icons';
 import { useDebounce } from '~/hooks';
 import * as searchService from '~/services/searchService';
+import RenderSearchResult from './RenderSearchResult';
 
 const cx = classNames.bind(styles);
 function Search() {
     const [searchValue, setSearchValue] = useState('');
     const [searchResult, setSearchResult] = useState([]);
     const inputRef = useRef();
-    const [showResult, setShowResult] = useState(true);
+    const [showResult, setShowResult] = useState(false);
     const [loading, setLoading] = useState(false);
-    const debounced = useDebounce(searchValue, 500);
+    const debouncedValue = useDebounce(searchValue, 500);
 
     useEffect(() => {
-        if (!debounced) {
+        if (!debouncedValue) {
             setSearchResult([]);
             return;
         }
@@ -29,13 +29,13 @@ function Search() {
         const fetchApi = async () => {
             setLoading(true);
 
-            const result = await searchService.search(debounced);
+            const result = await searchService.search(debouncedValue);
             // setSearchResult(result);
 
             setLoading(false);
         };
         fetchApi();
-    }, [debounced]);
+    }, [debouncedValue]);
     const handleInputChange = (searchValue) => {
         if (searchValue.startsWith(' ')) {
             return;
@@ -58,8 +58,7 @@ function Search() {
             <HeadlessTippy
                 interactive
                 appendTo={() => document.body}
-                // visible={showResult && searchResult.length > 0}
-                visible
+                visible={showResult && searchResult.length > 0}
                 render={(attrs) => (
                     <div
                         className={cx('search-result')}
@@ -68,9 +67,7 @@ function Search() {
                     >
                         <PopperWrapper>
                             <h4 className={cx('search-title')}>Accounts</h4>
-                            {searchResult.map((user) => (
-                                <AccountItem key={user.id} data={user} />
-                            ))}
+                            <RenderSearchResult data={searchResult} />
                         </PopperWrapper>
                     </div>
                 )}
