@@ -10,32 +10,41 @@ import {
     LiveIcon,
     LiveIconActive,
 } from '~/components/Icons';
+import SuggestedAccounts from './SuggestedAccounts';
 
 const cx = classNames.bind(styles);
 
 function Sidebar() {
     return (
         <aside className={cx('wrapper')}>
-            <Menu>
-                <MenuItem
-                    title="For you"
-                    to={config.routes.home}
-                    icon={<HomeIcon />}
-                    activeIcon={<HomeIconActive />}
-                />
-                <MenuItem
-                    title="Following"
-                    to={config.routes.following}
-                    icon={<UserGroupIcon />}
-                    activeIcon={<UserGroupIconActive />}
-                />
-                <MenuItem
-                    title="LIVE"
-                    to={config.routes.live}
-                    icon={<LiveIcon />}
-                    activeIcon={<LiveIconActive />}
-                />
-            </Menu>
+            <div>
+                <Menu>
+                    <MenuItem
+                        title="For you"
+                        to={config.routes.home}
+                        icon={<HomeIcon />}
+                        activeIcon={<HomeIconActive />}
+                    />
+                    <MenuItem
+                        title="Following"
+                        to={config.routes.following}
+                        icon={<UserGroupIcon />}
+                        activeIcon={<UserGroupIconActive />}
+                    />
+                    <MenuItem
+                        title="LIVE"
+                        to={config.routes.live}
+                        icon={<LiveIcon />}
+                        activeIcon={<LiveIconActive />}
+                    />
+                </Menu>
+                <SuggestedAccounts title="Suggested accounts" />
+                <SuggestedAccounts title="Following accounts" />
+                <SuggestedAccounts title="Following accounts" />
+
+                <SuggestedAccounts title="Following accounts" />
+            </div>
+            <div className={cx('scrollbar')}></div>
         </aside>
     );
 }

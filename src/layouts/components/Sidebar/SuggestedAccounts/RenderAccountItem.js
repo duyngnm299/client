@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import PropTypes from 'prop-types';
 
-import AccountItem from '~/components/AccountItem';
+import AccountItem from './AccountItem';
 
 function RenderSearchResult({ data }) {
     return data.map((user) => <AccountItem key={user.id} data={user} />);
