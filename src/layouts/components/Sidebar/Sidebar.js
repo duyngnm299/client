@@ -41,7 +41,6 @@ function Sidebar() {
                 <SuggestedAccounts title="Suggested accounts" />
                 <SuggestedAccounts title="Following accounts" />
                 <SuggestedAccounts title="Following accounts" />
-
                 <SuggestedAccounts title="Following accounts" />
             </div>
             <div className={cx('scrollbar')}></div>
