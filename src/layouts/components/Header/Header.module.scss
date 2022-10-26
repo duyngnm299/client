@@ -1,6 +1,6 @@
 .wrapper {
-    --search-border-radius: 92px;
-    --search-height: 46px;
+    --search-border-radius: 20px;
+    --search-height: 32px;
     --search-top-spacer: 9px;
     --search-button-width: 52px;
 
@@ -13,7 +13,7 @@
     height: var(--default-layout-header-height);
     background-color: var(--white);
     box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.12);
-    z-index: 10;
+    z-index: 999;
 }
 
 .inner {
@@ -22,11 +22,46 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 var(--default-layout-horizontal-spacer);
+    padding: 17px 15px;
+}
+
+.right-header {
+    display: flex;
+    align-items: center;
 }
 
 .logo-link {
     display: flex;
+}
+
+.logo-img {
+    height: 48px;
+}
+
+.navbar-list {
+    list-style: none;
+    display: flex;
+}
+
+.navbar-item {
+    margin-left: 24px;
+    padding: 8px 0;
+    font-size: 1.4rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.navbar-item::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 2px;
+    background: var(--primary);
+    transition: width 0.3s;
+    user-select: none;
+}
+.navbar-item:hover::after {
+    width: 100%;
 }
 
 .action {
@@ -34,36 +69,37 @@
     align-items: center;
 }
 
-.more-btn {
-    font-size: 2rem;
-    margin-left: 24px;
-    background-color: transparent;
-    padding: 4px 8px;
-    cursor: pointer;
+.icon {
+    font-size: 24px;
+    width: 24px;
 }
 
 // avatar
 
 .user-avatar {
-    width: 32px;
-    height: 32px;
+    width: 48px;
+    height: 48px;
+    padding: 4px;
     object-fit: cover;
     border-radius: 50%;
-    margin-left: 12px;
+    margin: 0 24px 0 12px;
     cursor: pointer;
 }
 
 .action-btn {
+    display: flex;
+    align-items: center;
     position: relative;
-    height: 42px;
+    height: 48px;
     background-color: transparent;
     color: #161823;
-    padding: 4px 8px;
+    padding: 4px 12px;
     cursor: pointer;
-}
-
-.msgIcon {
-    margin-left: 16px;
+    margin-right: 12px;
+    &:hover {
+        background-color: rgba(239, 236, 236, 0.5);
+        border-radius: 5px;
+    }
 }
 
 .badge {

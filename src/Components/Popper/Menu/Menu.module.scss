@@ -1,15 +1,10 @@
 // menu wrapper
 .menu-list {
-    width: 224px;
-    .menu-item {
-        margin-left: 0;
-        font-family: var(--font-family);
-        font-weight: 600;
-    }
+    width: 280px;
 }
 
 .menu-popper {
-    padding-bottom: 8px;
+    padding-bottom: 4px;
 }
 
 .menu-body {
@@ -17,18 +12,30 @@
 }
 
 .menu-item {
-    justify-content: flex-start;
     width: 100%;
-    border-radius: 0;
-    font-weight: 500;
-    padding: 11px 16px;
-    line-height: 1.8rem;
+    height: 40px;
+    padding: 10px 16px;
     &.separate {
         border-top: solid 1px rgba(22, 24, 35, 0.12);
     }
     &:hover {
         background: rgba(22, 24, 35, 0.03);
     }
+}
+.abc {
+    display: flex;
+    align-items: center;
+}
+.menu-icon {
+    font-size: 1.6rem;
+    line-height: 2rem;
+    margin-right: 12px;
+}
+
+.menu-title {
+    font-size: 1.4rem;
+    font-weight: 400;
+    line-height: 2rem;
 }
 
 // Header

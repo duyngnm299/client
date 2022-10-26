@@ -1,21 +1,21 @@
 .search,
 .search-result {
-    width: 361px;
+    width: 400px;
 }
 
 .search {
-    height: var(--search-height);
+    height: 32px;
     background-color: rgba(22, 24, 35, 0.06);
-    border-radius: var(--search-border-radius);
+    border-radius: 6px;
     padding-left: 16px;
     display: flex;
     align-items: center;
-    border: 1.5px solid transparent;
+    border: 1px solid transparent;
     position: relative;
     input {
         flex: 1;
-        font-size: 1.6rem;
-        padding: 12px 40px 12px 0;
+        font-size: 1.4rem;
+        padding: 4px 40px 4px 0;
         border: none;
         outline: none;
         font-family: var(--font-family);
@@ -52,7 +52,7 @@
 .loading {
     font-size: 1.6rem;
     position: absolute;
-    right: calc(var(--search-button-width) + 16px);
+    right: 52px;
     top: 50%;
     transform: translateY(-50%);
     color: rgba(22, 24, 35, 0.34);
@@ -76,12 +76,12 @@
     align-items: center;
     justify-content: center;
     width: var(--search-button-width);
+    padding: 4px 12px;
     height: 100%;
-    border-top-right-radius: var(--search-border-radius);
-    border-bottom-right-radius: var(--search-border-radius);
-    font-size: 1.8rem;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    font-size: 1.4rem;
     color: rgba(22, 24, 35, 0.34);
-
     &:hover {
         cursor: pointer;
         background-color: rgba(22, 24, 35, 0.03);
