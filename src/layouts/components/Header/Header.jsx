@@ -46,7 +46,7 @@ const saved_items = [
 ];
 
 function Header() {
-    const currentUser = true;
+    const currentUser = false;
     const [showSaved, setShowSaved] = useState(false);
 
     console.log(showSaved);
@@ -173,31 +173,32 @@ function Header() {
                                     <span className={cx('badge')}>12</span>
                                 </button>
                             </Tippy>
+                            <Menu items={userMenu}>
+                                <Image
+                                    className={cx('user-avatar')}
+                                    src="https://scontent.fsgn5-11.fna.fbcdn.net/v/t39.30808-6/301264677_1702038363505540_800329165601559843_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=tIzc_YaXFe0AX_SKmZa&_nc_ht=scontent.fsgn5-11.fna&oh=00_AT9VjdiQH4yRpgAgjOY7sm8lgiWohDHXZzgZmLALgeBYlQ&oe=635C813C"
+                                    alt="avatar"
+                                    // Link ảnh gốc lỗi => set ảnh khác khác ảnh no Image
+                                    fallBack="https://scontent-hkg4-2.xx.fbcdn.net/v/t39.30808-6/248794374_1491385281237517_7930428664753935404_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=174925&_nc_ohc=5lauKy6zDsMAX9wvFT6&tn=VeXMx7MBEtEDqia-&_nc_ht=scontent-hkg4-2.xx&oh=00_AT9zAmle7fzxSbIGPvrXOsjlUnIraF6SkS8peSiVHZ7rAA&oe=63302978"
+                                />
+                            </Menu>
                         </>
                     ) : (
                         <>
-                            <Button primary>Log in</Button>
+                            <Link to={config.routes.auth}>
+                                <Button primary>Đăng nhập</Button>
+                            </Link>
                         </>
                     )}
-                    <Menu
-                        items={currentUser ? userMenu : null}
-                        onChange={handleMenuChange}
-                    >
-                        {currentUser ? (
-                            <Image
-                                className={cx('user-avatar')}
-                                src="https://scontent.fsgn5-11.fna.fbcdn.net/v/t39.30808-6/301264677_1702038363505540_800329165601559843_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=tIzc_YaXFe0AX_SKmZa&_nc_ht=scontent.fsgn5-11.fna&oh=00_AT9VjdiQH4yRpgAgjOY7sm8lgiWohDHXZzgZmLALgeBYlQ&oe=635C813C"
-                                alt="avatar"
-                                // Link ảnh gốc lỗi => set ảnh khác khác ảnh no Image
-                                fallBack="https://scontent-hkg4-2.xx.fbcdn.net/v/t39.30808-6/248794374_1491385281237517_7930428664753935404_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=174925&_nc_ohc=5lauKy6zDsMAX9wvFT6&tn=VeXMx7MBEtEDqia-&_nc_ht=scontent-hkg4-2.xx&oh=00_AT9zAmle7fzxSbIGPvrXOsjlUnIraF6SkS8peSiVHZ7rAA&oe=63302978"
-                            />
-                        ) : (
-                            ''
-                        )}
-                    </Menu>
-                    <Button text leftIcon={<FontAwesomeIcon icon={faPlus} />}>
-                        Đăng tin
-                    </Button>
+
+                    <Link to={config.routes.auth}>
+                        <Button
+                            text
+                            leftIcon={<FontAwesomeIcon icon={faPlus} />}
+                        >
+                            Đăng tin
+                        </Button>
+                    </Link>
                 </div>
             </div>
         </header>

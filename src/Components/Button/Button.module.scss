@@ -51,6 +51,9 @@
 .primary {
     background-color: var(--primary);
     color: var(--white);
+    margin-right: 24px;
+    border-radius: 8px;
+
     border-color: var(--primary);
     &:hover {
         border-color: var(--primary);
