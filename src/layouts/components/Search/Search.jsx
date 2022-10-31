@@ -30,7 +30,7 @@ function Search() {
             setLoading(true);
 
             const result = await searchService.search(debouncedValue);
-            // setSearchResult(result);
+            setSearchResult(result);
 
             setLoading(false);
         };

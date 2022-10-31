@@ -2,24 +2,11 @@ import classNames from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Tippy from '@tippyjs/react';
 
-import HeadLess from '@tippyjs/react/headless';
+// import HeadLess from '@tippyjs/react/headless';
 
 import 'tippy.js/dist/tippy.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-import {
-    faPlus,
-    // faEllipsisVertical,
-    faEarthAsia,
-    faCircleQuestion,
-    faKeyboard,
-    faGear,
-    faUser,
-    faCoins,
-    faRightFromBracket,
-    faBars,
-    faLock,
-} from '@fortawesome/free-solid-svg-icons';
 import styles from './Header.module.scss';
 import images from '~/assets/images';
 import Button from '~/components/Button';
@@ -34,6 +21,7 @@ import {
     faMessage,
 } from '@fortawesome/free-regular-svg-icons';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const cx = classNames.bind(styles);
 
@@ -46,36 +34,15 @@ const saved_items = [
 ];
 
 function Header() {
-    const currentUser = false;
     const [showSaved, setShowSaved] = useState(false);
-
-    console.log(showSaved);
+    const currentUser = useSelector((state) => state.auth.login.currentUser);
+    const navigate = useNavigate();
+    // console.log(showSaved);
     // khi login thi currentUser = true
-    const handleMenuChange = (menuItem) => {
-        console.log(menuItem);
-    };
-    const userMenu = [
-        {
-            icon: <FontAwesomeIcon icon={faBars} />,
-            title: 'Quản lý tin đăng',
-            to: config.routes.postmng,
-        },
-        {
-            icon: <FontAwesomeIcon icon={faUser} />,
-            title: 'Thay đổi thông tin cá nhân',
-            to: config.routes.profile,
-        },
-        {
-            icon: <FontAwesomeIcon icon={faLock} />,
-            title: 'Thay đổi mật khẩu',
-            to: config.routes.password,
-        },
-        {
-            icon: <FontAwesomeIcon icon={faRightFromBracket} />,
-            title: 'Log out',
-            separate: true,
-        },
-    ];
+    // const handleMenuChange = (menuItem) => {
+    //     console.log(menuItem);
+    // };
+
     return (
         <header className={cx('wrapper')}>
             <div className={cx('inner')}>
@@ -173,32 +140,42 @@ function Header() {
                                     <span className={cx('badge')}>12</span>
                                 </button>
                             </Tippy>
-                            <Menu items={userMenu}>
-                                <Image
-                                    className={cx('user-avatar')}
-                                    src="https://scontent.fsgn5-11.fna.fbcdn.net/v/t39.30808-6/301264677_1702038363505540_800329165601559843_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=tIzc_YaXFe0AX_SKmZa&_nc_ht=scontent.fsgn5-11.fna&oh=00_AT9VjdiQH4yRpgAgjOY7sm8lgiWohDHXZzgZmLALgeBYlQ&oe=635C813C"
-                                    alt="avatar"
-                                    // Link ảnh gốc lỗi => set ảnh khác khác ảnh no Image
-                                    fallBack="https://scontent-hkg4-2.xx.fbcdn.net/v/t39.30808-6/248794374_1491385281237517_7930428664753935404_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=174925&_nc_ohc=5lauKy6zDsMAX9wvFT6&tn=VeXMx7MBEtEDqia-&_nc_ht=scontent-hkg4-2.xx&oh=00_AT9zAmle7fzxSbIGPvrXOsjlUnIraF6SkS8peSiVHZ7rAA&oe=63302978"
-                                />
+                            <Menu>
+                                <div className={cx('user-wrapper')}>
+                                    <Image
+                                        className={cx('user-avatar')}
+                                        src="https://scontent.fsgn5-11.fna.fbcdn.net/v/t39.30808-6/301264677_1702038363505540_800329165601559843_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=tIzc_YaXFe0AX_SKmZa&_nc_ht=scontent.fsgn5-11.fna&oh=00_AT9VjdiQH4yRpgAgjOY7sm8lgiWohDHXZzgZmLALgeBYlQ&oe=635C813C"
+                                        alt="avatar"
+                                        // Link ảnh gốc lỗi => set ảnh khác khác ảnh no Image
+                                        fallBack="https://scontent-hkg4-2.xx.fbcdn.net/v/t39.30808-6/248794374_1491385281237517_7930428664753935404_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=174925&_nc_ohc=5lauKy6zDsMAX9wvFT6&tn=VeXMx7MBEtEDqia-&_nc_ht=scontent-hkg4-2.xx&oh=00_AT9zAmle7fzxSbIGPvrXOsjlUnIraF6SkS8peSiVHZ7rAA&oe=63302978"
+                                    />
+
+                                    <span className={cx('username')}>
+                                        Hi, {currentUser.user.username}
+                                    </span>
+                                </div>
                             </Menu>
                         </>
                     ) : (
                         <>
-                            <Link to={config.routes.auth}>
+                            <Link to={config.routes.login}>
                                 <Button primary>Đăng nhập</Button>
                             </Link>
                         </>
                     )}
 
-                    <Link to={config.routes.auth}>
-                        <Button
-                            text
-                            leftIcon={<FontAwesomeIcon icon={faPlus} />}
-                        >
-                            Đăng tin
-                        </Button>
-                    </Link>
+                    <Button
+                        onClick={() => {
+                            if (!currentUser) {
+                                navigate('/dang-nhap');
+                            } else {
+                                console.log('go to post page');
+                            }
+                        }}
+                        text
+                    >
+                        Đăng tin
+                    </Button>
                 </div>
             </div>
         </header>

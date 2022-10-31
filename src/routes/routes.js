@@ -14,7 +14,8 @@ import Search from '~/pages/Search';
 import Upload from '~/pages/Upload';
 import Password from '~/pages/Password';
 import PostManagement from '~/pages/PostManagement';
-import Auth from '~/pages/Auth';
+import Login from '~/pages/Login';
+import Register from '~/pages/Register';
 
 // Public routes
 const publicRoutes = [
@@ -51,7 +52,8 @@ const publicRoutes = [
     },
 
     { path: config.routes.profile, component: Profile },
-    { path: config.routes.auth, component: Auth },
+    { path: config.routes.login, component: Login },
+    { path: config.routes.register, component: Register },
 
     { path: config.routes.password, component: Password },
     { path: config.routes.postmng, component: PostManagement },

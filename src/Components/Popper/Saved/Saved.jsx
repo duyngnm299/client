@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import Tippy from '@tippyjs/react/headless';
 import { Wrapper as PopperWrapper } from '~/components/Popper';
 import styles from './Saved.module.scss';
@@ -10,14 +10,14 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
-const defaultFn = () => {};
+// const defaultFn = () => {};
 
 function Saved({
     show = false,
     children,
     items = [],
     hide,
-    onChange = defaultFn,
+    // onChange = defaultFn,
 }) {
     const [history, setHistory] = useState([{ data: items }]);
     const current = history[history.length - 1];
@@ -45,9 +45,6 @@ function Saved({
         </div>
     );
 
-    const hideSaved = () => {
-        return (show = false);
-    };
     return (
         <Tippy
             visible={show}

@@ -11,7 +11,8 @@ const routes = {
     password: '/doi-mat-khau',
     postmng: '/quan-ly-bai-dang',
     upload: '/dang-tin',
-    auth: '/dang-nhap',
+    login: '/dang-nhap',
+    register: '/dang-ky',
 };
 
 export default routes;
