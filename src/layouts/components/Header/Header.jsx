@@ -22,6 +22,7 @@ import {
 } from '@fortawesome/free-regular-svg-icons';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 const cx = classNames.bind(styles);
 
@@ -35,7 +36,10 @@ const saved_items = [
 
 function Header() {
     const [showSaved, setShowSaved] = useState(false);
+
     const currentUser = useSelector((state) => state.auth.login.currentUser);
+    const googleUsername = currentUser?.user?.fullName;
+    console.log(googleUsername);
     const navigate = useNavigate();
     // console.log(showSaved);
     // khi login thi currentUser = true
@@ -144,14 +148,17 @@ function Header() {
                                 <div className={cx('user-wrapper')}>
                                     <Image
                                         className={cx('user-avatar')}
-                                        src="https://scontent.fsgn5-11.fna.fbcdn.net/v/t39.30808-6/301264677_1702038363505540_800329165601559843_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=tIzc_YaXFe0AX_SKmZa&_nc_ht=scontent.fsgn5-11.fna&oh=00_AT9VjdiQH4yRpgAgjOY7sm8lgiWohDHXZzgZmLALgeBYlQ&oe=635C813C"
+                                        src={currentUser?.user?.profilePicture}
                                         alt="avatar"
                                         // Link ảnh gốc lỗi => set ảnh khác khác ảnh no Image
                                         fallBack="https://scontent-hkg4-2.xx.fbcdn.net/v/t39.30808-6/248794374_1491385281237517_7930428664753935404_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=174925&_nc_ohc=5lauKy6zDsMAX9wvFT6&tn=VeXMx7MBEtEDqia-&_nc_ht=scontent-hkg4-2.xx&oh=00_AT9zAmle7fzxSbIGPvrXOsjlUnIraF6SkS8peSiVHZ7rAA&oe=63302978"
                                     />
 
                                     <span className={cx('username')}>
-                                        Hi, {currentUser.user.username}
+                                        Hi,{' '}
+                                        {googleUsername
+                                            ? googleUsername
+                                            : currentUser?.user?.username}
                                     </span>
                                 </div>
                             </Menu>

@@ -26,17 +26,9 @@
     border-bottom-left-radius: 20px;
 }
 
-.auth {
-    background-color: #fff;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-    width: 464px;
-    padding: 32px;
-}
-
 .welcome {
     font-size: 1.6rem;
-    margin-top: 48px;
+    // margin-top: 48px;
     color: #2c2c2c;
     font-weight: 500;
 }
@@ -44,139 +36,9 @@
 .title {
     width: 100%;
     font-size: 2.4rem;
-    margin: 4px 0 32px 0;
+    margin: 4px 0 12px 0;
     font-weight: 600;
 }
-.input-wrapper + .input-wrapper {
-    margin-top: 16px;
-}
-.input-wrapper {
-    position: relative;
-    display: flex;
-}
-.input-icon {
-    pointer-events: none;
-    position: absolute;
-    left: 13px;
-    top: 8px;
-    font-size: 2.2rem;
-}
-.input {
-    width: 100%;
-    font-size: 1.4rem;
-    color: rgb(44, 44, 44);
-    padding: 13px 16px 13px 43px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    &:focus-within {
-        border-color: rgba(22, 24, 35, 0.8);
-    }
-}
-
-.login-btn {
-    width: 100%;
-    margin-top: 24px;
-    cursor: pointer;
-    user-select: none;
-}
-
-.remember-forgot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    margin-top: 16px;
-}
-
-.remember {
-    display: flex;
-    align-items: center;
-}
-
-.checkbox {
-    width: 18px;
-    height: 18px;
-    margin-right: 8px;
-    cursor: pointer;
-}
-input[type='checkbox']:checked {
-    accent-color: #74150f;
-}
-
-.remember-text {
-    font-size: 1.4rem;
-    user-select: none;
-    font-weight: 400;
-}
-
-.forgot-text {
-    font-size: 1.4rem;
-    cursor: pointer;
-    color: var(--primary);
-    user-select: none;
-}
-
-// or
-.or {
-    margin: 16px 0px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    width: 100%;
-    height: 24px;
-    .line {
-        width: 100%;
-        height: 1px;
-        background-color: rgb(242, 242, 242);
-    }
-    .or-text {
-        position: absolute;
-        top: -2px;
-        left: calc(50% - 24px);
-        height: 24px;
-        width: 52px;
-        padding: 4px 8px;
-        background-color: rgb(255, 255, 255);
-    }
-    .text {
-        font-size: 1.4rem;
-        line-height: 2rem;
-        font-weight: 400;
-        color: rgb(153, 153, 153);
-    }
-}
-
-.login-with-google {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    padding: 12px 16px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    user-select: none;
-    &:hover {
-        background-color: rgb(242, 242, 242);
-        color: rgb(44, 44, 44);
-        border: 1px solid rgb(204, 204, 204);
-    }
-}
-
-.google-icon {
-    margin-right: 8px;
-    width: 24px;
-    height: 24px;
-}
-
-.google-text {
-    font-size: 1.4rem;
-}
-
 .register-text {
     display: flex;
     justify-content: center;
@@ -223,6 +85,10 @@ input[type='checkbox']:checked {
     font-size: 2.2rem;
 }
 
+.email {
+    top: 9.5px;
+}
+
 .input-register {
     width: 100%;
     font-size: 1.4rem;
@@ -238,9 +104,38 @@ input[type='checkbox']:checked {
     }
 }
 
+input:invalid {
+    animation: shake 0.3s;
+}
+
+@keyframes shake {
+    25% {
+        transform: translateX(4px);
+    }
+    50% {
+        transform: translateX(-4px);
+    }
+    75% {
+        transform: translateX(4px);
+    }
+}
+
+.invalid {
+    border: solid 1px var(--primary);
+    animation: shake 0.3s;
+}
+
+.message {
+    display: flex;
+    height: 20px;
+    background-color: #fff;
+    font-size: 1.2rem;
+    color: var(--primary);
+}
+
 .register-btn {
     width: 100%;
-    margin-top: 24px;
+    margin-top: 16px;
     cursor: pointer;
     user-select: none;
 }
@@ -289,9 +184,18 @@ input[type='checkbox']:checked {
         color: rgb(44, 44, 44);
         border: 1px solid rgb(204, 204, 204);
     }
+    .google-icon {
+        margin-right: 8px;
+        width: 24px;
+        height: 24px;
+    }
+
+    .google-text {
+        font-size: 1.4rem;
+    }
 }
 
-.login-text {
+.register-text {
     display: flex;
     justify-content: center;
     margin-top: 12px;
@@ -311,3 +215,5 @@ input[type='checkbox']:checked {
         }
     }
 }
+
+// SWAL

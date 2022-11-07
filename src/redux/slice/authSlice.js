@@ -37,9 +37,9 @@ const authSlice = createSlice({
             state.register.error = false;
             state.register.success = true;
         },
-        registerFailed: (state) => {
+        registerFailed: (state, action) => {
             state.register.isFetching = false;
-            state.register.error = true;
+            state.register.error = action.payload;
             state.register.success = false;
         },
         // Logout

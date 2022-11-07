@@ -7,7 +7,7 @@
     --font-family: 'Lexend Medium';
     // Default layout
     --default-layout-header-height: 96px;
-    --default-layout-width: 1520px;
+    --default-layout-width: 1536px;
     --default-layout-horizontal-spacer: 24px;
     --search-bar-height: 57px;
 }
@@ -100,6 +100,7 @@ body {
         font-family: 'Lexend';
         top: -4px;
         letter-spacing: 1px;
+        // white-space: pre-line;
     }
 
     .tippy-arrow {
@@ -108,6 +109,8 @@ body {
 
     .tippy-content {
         padding: 8px 9px;
+        white-space: pre-line;
+        // word-wrap: break-word;
     }
 
     .tippy-box[data-placement^='bottom'] > .tippy-arrow:before {

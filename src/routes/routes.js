@@ -11,11 +11,11 @@ import Apartment from '~/pages/Apartment';
 import Ground from '~/pages/Ground';
 import Profile from '~/pages/Profile';
 import Search from '~/pages/Search';
-import Upload from '~/pages/Upload';
+import Upload from '~/components/Upload';
 import Password from '~/pages/Password';
 import PostManagement from '~/pages/PostManagement';
-import Login from '~/pages/Login';
-import Register from '~/pages/Register';
+import Login from '~/components/Login';
+import Register from '~/components/Register';
 
 // Public routes
 const publicRoutes = [

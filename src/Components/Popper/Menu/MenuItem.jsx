@@ -5,7 +5,7 @@ import styles from './Menu.module.scss';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import config from '~/config';
-import { createAxios } from '~/createInstance';
+import { createAxios } from '~/createInstances';
 import {
     faUser,
     faRightFromBracket,
@@ -13,17 +13,17 @@ import {
     faLock,
 } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { logOut } from '~/redux/apiRequest';
-import { logOutSuccess } from '~/redux/authSlice';
+import { logOut } from '~/api/index';
+import { logOutSuccess, registerFailed } from '~/redux/slice/authSlice';
 const cx = classNames.bind(styles);
 function MenuItem() {
     const currentUser = useSelector((state) => state.auth.login.currentUser);
     const id = currentUser._id;
     const accessToken = currentUser?.accessToken;
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
     let axiosJWT = createAxios(currentUser, dispatch, logOutSuccess);
-
     const handleLogout = () => {
         logOut(dispatch, id, navigate, accessToken, axiosJWT);
     };
