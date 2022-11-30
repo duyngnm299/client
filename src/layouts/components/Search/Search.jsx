@@ -12,7 +12,7 @@ import * as searchService from '~/services/searchService';
 import RenderSearchResult from './RenderSearchResult';
 
 const cx = classNames.bind(styles);
-function Search() {
+function Search({ className }) {
     const [searchValue, setSearchValue] = useState('');
     const [searchResult, setSearchResult] = useState([]);
     const inputRef = useRef();
@@ -51,7 +51,9 @@ function Search() {
     const handleHideResult = () => {
         setShowResult(false);
     };
-
+    const classes = cx('search', {
+        [className]: className,
+    });
     return (
         // Thêm thẻ div để Tippy không warning
         <div>
@@ -61,47 +63,75 @@ function Search() {
                 visible={showResult && searchResult.length > 0}
                 render={(attrs) => (
                     <div
-                        className={cx('search-result')}
+                        className={cx(
+                            className
+                                ? 'search-result-post-list'
+                                : 'search-result',
+                        )}
                         tabIndex="-1"
                         {...attrs}
                     >
                         <PopperWrapper>
-                            <h4 className={cx('search-title')}>Accounts</h4>
+                            <h4
+                                className={cx(
+                                    className
+                                        ? 'search-title-post-list'
+                                        : 'search-title',
+                                )}
+                            >
+                                {className ? 'Bài đăng' : 'Tài khoản'}
+                            </h4>
                             <RenderSearchResult data={searchResult} />
                         </PopperWrapper>
                     </div>
                 )}
                 onClickOutside={handleHideResult}
             >
-                <div className={cx('search')}>
+                <div className={classes}>
                     <input
                         ref={inputRef}
                         value={searchValue}
                         onChange={(e) => handleInputChange(e.target.value)}
-                        placeholder="Tìm nhanh. VD: Phòng trọ Lê Duẩn"
+                        placeholder={
+                            className
+                                ? 'Tìm theo mã tin, tiêu đề'
+                                : 'Tìm nhanh. VD: Phòng trọ Lê Duẩn'
+                        }
                         spellCheck={false}
                         onFocus={() => setShowResult(true)}
                     />
                     {!!searchValue && !loading && (
-                        <button className={cx('clear')} onClick={handleClear}>
+                        <button
+                            className={cx(
+                                className ? 'clear-post-list' : 'clear',
+                            )}
+                            onClick={handleClear}
+                        >
                             <FontAwesomeIcon icon={faCircleXmark} />
                         </button>
                     )}
 
                     {loading && (
                         <FontAwesomeIcon
-                            className={cx('loading')}
+                            className={cx(
+                                className ? 'loading-post-list' : 'loading',
+                            )}
                             icon={faSpinner}
                         />
                     )}
 
                     <button
-                        className={cx('search-btn')}
+                        className={cx(
+                            className ? 'search-btn-post-list' : 'search-btn',
+                        )}
                         onMouseDown={(e) => {
                             e.preventDefault();
                         }}
                     >
-                        <SearchIcon />
+                        <SearchIcon
+                            width={className && '1.8rem'}
+                            height={className && '1.8rem'}
+                        />
                     </button>
                 </div>
             </HeadlessTippy>

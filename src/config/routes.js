@@ -2,7 +2,7 @@ const routes = {
     home: '/',
     motel: '/phong-tro',
     house: '/nha-nguyen-can',
-    housefacade: '/nha-mat-tien',
+    findroomates: '/tim-nguoi-o-ghep',
     office: '/van-phong',
     apartment: '/chung-cu-can-ho',
     ground: '/mat-bang',
@@ -10,7 +10,8 @@ const routes = {
     profile: '/thong-tin-ca-nhan',
     password: '/doi-mat-khau',
     postmng: '/quan-ly-bai-dang',
-    upload: '/dang-tin',
+    post: '/quan-ly-bai-dang/dang-tin',
+    postlist: '/quan-ly-bai-dang/danh-sach-tin-dang',
     login: '/dang-nhap',
     register: '/dang-ky',
 };

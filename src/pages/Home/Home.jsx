@@ -4,7 +4,7 @@ import classNames from 'classnames/bind';
 import styles from './Home.module.scss';
 import ImageSlider from '~/components/ImageSlider';
 import SearchHomePage from '~/components/SearchHomePage';
-import PostManagement from '../PostManagement';
+import ShowPost from '~/components/ShowPost';
 import images from '~/assets/images';
 
 const cx = classNames.bind(styles);
@@ -22,6 +22,9 @@ const Home = () => {
             <div className={cx('slider-container')}>
                 <ImageSlider slides={slides} />
                 <SearchHomePage />
+            </div>
+            <div className={cx('post-container')}>
+                <ShowPost />
             </div>
         </div>
     );

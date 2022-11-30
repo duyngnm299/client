@@ -13,7 +13,7 @@ import { VscVerified } from 'react-icons/vsc';
 import { useDispatch } from 'react-redux';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useSelector } from 'react-redux';
-import { signIn, signUp, signUpGoogle } from '~/api';
+import { signIn, signUp, signUpGoogle, signInGoogle } from '~/api';
 import { useEffect } from 'react';
 import Swal from 'sweetalert2';
 import 'sweetalert2/src/sweetalert2.scss';
@@ -45,7 +45,8 @@ function Register() {
         e.preventDefault();
         if (password !== rePassword && !password) {
             return;
-        } else if (password === rePassword) {
+        }
+        if (password === rePassword) {
             setMessage(true);
 
             const newUser = {
@@ -131,8 +132,18 @@ function Register() {
 
     function handleGoogleLoginSuccess(tokenResponse) {
         const accessToken = tokenResponse.access_token;
-        console.log(accessToken);
-        signUpGoogle(accessToken, navigate, dispatch);
+        // signInGoogle(accessToken, navigate, dispatch);
+        dispatch(loginStart());
+        signInGoogle(accessToken)
+            .then((res) => {
+                console.log(res.data);
+                setShowSuccessNotify(true);
+                dispatch(loginSuccess(res.data));
+            })
+            .catch((error) => {
+                console.log(error?.response?.data?.message);
+                dispatch(loginFailed(error?.response?.data?.message));
+            });
     }
     const login = useGoogleLogin({ onSuccess: handleGoogleLoginSuccess });
     return (

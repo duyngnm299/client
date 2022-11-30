@@ -10,21 +10,19 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <React.StrictMode>
-        <Provider store={store}>
-            <PersistGate loading={null} persistor={persistor}>
-                <GoogleOAuthProvider
-                    clientId={
-                        '854156001137-drp9m0rqn66jlplhhafnuihscskh0gbt.apps.googleusercontent.com'
-                    }
-                >
-                    <GlobalStyles>
-                        <App />
-                    </GlobalStyles>
-                </GoogleOAuthProvider>
-            </PersistGate>
-        </Provider>
-    </React.StrictMode>,
+    <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+            <GoogleOAuthProvider
+                clientId={
+                    '854156001137-drp9m0rqn66jlplhhafnuihscskh0gbt.apps.googleusercontent.com'
+                }
+            >
+                <GlobalStyles>
+                    <App />
+                </GlobalStyles>
+            </GoogleOAuthProvider>
+        </PersistGate>
+    </Provider>,
 );
 
 // If you want to start measuring performance in your app, pass a function

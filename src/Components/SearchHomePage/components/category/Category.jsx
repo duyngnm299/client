@@ -92,42 +92,19 @@ function Category({
             setNameCategory(
                 nameCategory.filter((item) => item !== newItemChecked.text),
             );
-            // console.log(b);
-            // updateList = updateList.filter((item) => {
-            //     return item !== newItemChecked;
-            // });
-            // console.log(itemChecked);
-            // updateList.splice(itemChecked, 0);
-
             console.log(updateList);
-            // checked.filter(
-            //     (item) => item.isChecked !== itemChecked.isChecked,
-            // ),
-            // eslint-disable-next-line no-sequences
-            // setChecked(...checked, checked.filter());
-            // setChecked(
-            //     ...checked,
-            //     checked.filter((item) => item === item?.isChecked),
-            // );
         }
         setChecked(updateList);
     };
-
-    // const checkedItems = checked.length
-    //     ? checked.reduce((total, item) => {
-    //           return total + item;
-    //       })
-    //     : '';
 
     console.log(checked);
 
     const renderItems = () => {
         return data.map((item, index) => {
-            // console.log(item.isChecked);
             return (
                 <label
                     key={index}
-                    // htmlFor={`checkbox${index}`}
+                    htmlFor={`checkbox${index}`}
                     className={cx('category-item')}
                 >
                     <span className={cx('icon')}>{icon}</span>
@@ -153,6 +130,7 @@ function Category({
     const handleRefresh = () => {
         setIpCheck(false);
         setChecked([]);
+        setNameCategory([]);
         category_items.map((item) => (item.isChecked = false));
     };
 

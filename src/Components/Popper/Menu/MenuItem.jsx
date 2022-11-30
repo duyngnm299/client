@@ -29,7 +29,7 @@ function MenuItem() {
     };
     return (
         <>
-            <Link to={config.routes.postmng}>
+            <Link to={config.routes.post}>
                 <div className={cx('menu-item')}>
                     <div className={cx('abc')}>
                         <span className={cx('menu-icon')}>

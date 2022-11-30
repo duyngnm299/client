@@ -10,9 +10,8 @@ function DefaultLayout({ children }) {
             <Header />
 
             <div className={cx('container')}>
-                <div className="search-bar">
-                    <SearchBar />
-                </div>
+                <SearchBar />
+
                 <div className={cx('content')}>{children}</div>
             </div>
         </div>

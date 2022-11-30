@@ -23,7 +23,7 @@ import {
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-
+import Sidebar from '../Sidebar';
 const cx = classNames.bind(styles);
 
 const saved_items = [
@@ -69,11 +69,6 @@ function Header() {
                                     Nhà nguyên căn
                                 </li>
                             </Link>
-                            <Link to={config.routes.housefacade}>
-                                <li className={cx('navbar-item')}>
-                                    Nhà mặt phố
-                                </li>
-                            </Link>
                             <Link to={config.routes.office}>
                                 <li className={cx('navbar-item')}>Văn phòng</li>
                             </Link>
@@ -84,6 +79,11 @@ function Header() {
                             </Link>
                             <Link to={config.routes.ground}>
                                 <li className={cx('navbar-item')}>Mặt bằng </li>
+                            </Link>
+                            <Link to={config.routes.findroomates}>
+                                <li className={cx('navbar-item')}>
+                                    Tìm người ở ghép
+                                </li>
                             </Link>
                         </ul>
                     </nav>
@@ -151,7 +151,7 @@ function Header() {
                                         src={currentUser?.user?.profilePicture}
                                         alt="avatar"
                                         // Link ảnh gốc lỗi => set ảnh khác khác ảnh no Image
-                                        fallBack="https://scontent-hkg4-2.xx.fbcdn.net/v/t39.30808-6/248794374_1491385281237517_7930428664753935404_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=174925&_nc_ohc=5lauKy6zDsMAX9wvFT6&tn=VeXMx7MBEtEDqia-&_nc_ht=scontent-hkg4-2.xx&oh=00_AT9zAmle7fzxSbIGPvrXOsjlUnIraF6SkS8peSiVHZ7rAA&oe=63302978"
+                                        fallBack={images.defaultAvt}
                                     />
 
                                     <span className={cx('username')}>
@@ -171,18 +171,15 @@ function Header() {
                         </>
                     )}
 
-                    <Button
-                        onClick={() => {
-                            if (!currentUser) {
-                                navigate('/dang-nhap');
-                            } else {
-                                console.log('go to post page');
-                            }
-                        }}
-                        text
+                    <Link
+                        to={
+                            currentUser
+                                ? config.routes.post
+                                : config.routes.login
+                        }
                     >
-                        Đăng tin
-                    </Button>
+                        <Button text>Đăng tin</Button>
+                    </Link>
                 </div>
             </div>
         </header>
