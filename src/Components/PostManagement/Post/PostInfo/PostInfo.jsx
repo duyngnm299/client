@@ -20,6 +20,7 @@ import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import styles from './PostInfo.module.scss';
 import { FiCalendar } from 'react-icons/fi';
+import Mapbox from '~/components/Mapbox';
 
 // import GoongMap from '~/components/GoongMap';
 const cx = classNames.bind(styles);
@@ -1002,7 +1003,9 @@ function PostInfo() {
                                         Vị trí trên bản đồ
                                     </p>
                                     <div className={cx('map')}>
-                                        {/* <GoongMap /> */}
+                                        <Mapbox
+                                            searchAddress={valueInputAddress}
+                                        />
                                     </div>
                                 </div>
                             </div>

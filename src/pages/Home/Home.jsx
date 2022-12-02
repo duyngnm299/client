@@ -6,7 +6,6 @@ import ImageSlider from '~/components/ImageSlider';
 import SearchHomePage from '~/components/SearchHomePage';
 import ShowPost from '~/components/ShowPost';
 import images from '~/assets/images';
-
 const cx = classNames.bind(styles);
 const Home = () => {
     const slides = [
