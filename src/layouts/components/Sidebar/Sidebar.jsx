@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import classNames from 'classnames/bind';
 import styles from './Sidebar.module.scss';
 import images from '~/assets/images';
@@ -7,13 +7,15 @@ import { MenuIcon } from '~/components/Icons';
 import { IoPricetagsOutline } from 'react-icons/io5';
 import { FiSettings } from 'react-icons/fi';
 import { RiMoneyDollarCircleLine } from 'react-icons/ri';
+import { AiOutlineUser } from 'react-icons/ai';
 import {
     MdOutlineKeyboardArrowRight,
     MdOutlineKeyboardArrowUp,
 } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import config from '~/config';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { currentMenu } from '~/redux/slice/menuSlice';
 const cx = classNames.bind(styles);
 const postMngItems = {
     title: 'Quản lý bài đăng',
@@ -26,7 +28,6 @@ const postMngItems = {
             text: 'Danh sách tin đăng',
             to: config.routes.postlist,
         },
-        { text: 'Tin nháp', to: '#' },
     ],
 };
 const financialMngItems = {
@@ -71,18 +72,51 @@ const utilityMngItems = {
         },
     ],
 };
+const infoItem = {
+    title: 'Thông tin cá nhân',
+    childrenTitle: [
+        {
+            text: 'Thay đổi thông tin cá nhân',
+            to: config.routes.profile,
+        },
+        {
+            text: 'Thay đổi mật khẩu',
+            to: config.routes.password,
+        },
+    ],
+};
+const HOST_NAME = process.env.REACT_APP_HOST_NAME;
+
 function Sidebar(checked) {
+    const dispatch = useDispatch();
+    const crMenu = useSelector((state) => state.menu.menu?.currentMenu);
+
     const [showPostItem, setShowPostItem] = useState(false);
     const [showFinancialItem, setShowFinancialItem] = useState(false);
     const [showCostItem, setShowCostItem] = useState(false);
     const [showUtilityItem, setShowUtilityItem] = useState(false);
-    const [postMngIndex, setPostMngIndex] = useState(0);
+    const [showInfoItem, setShowInfoItem] = useState(false);
+
+    const [postMngIndex, setPostMngIndex] = useState(
+        crMenu === 'new_post' ? 0 : crMenu === 'post_list' ? 1 : -1,
+    );
     const [financialMngIndex, setFinancialMngIndex] = useState(-1);
     const [costsMngIndex, setCostsMngIndex] = useState(-1);
     const [utilityMngIndex, setUtilityMngIndex] = useState(-1);
+    const [infoMngIndex, setInfoMngIndex] = useState(
+        crMenu === 'change_profile' ? 0 : crMenu === 'change_password' ? 1 : -1,
+    );
+
     const currentUser = useSelector(
         (state) => state.auth.login?.currentUser?.user,
     );
+    const updatedUser = useSelector(
+        (state) => state.auth.update?.currentUser?.user,
+    );
+    console.log(crMenu);
+    // useEffect(() => {
+    //     setBalance(currentUser?.balance);
+    // }, [currentUser?.balance]);
     const formatCash = (number) => {
         return number
             .split('')
@@ -99,8 +133,10 @@ function Sidebar(checked) {
                     <div className={cx('user-avatar')}>
                         <img
                             src={
-                                currentUser?.profilePicture
-                                    ? currentUser.profilePicture
+                                updatedUser?.profilePicture
+                                    ? `${HOST_NAME}${updatedUser?.profilePicture}`
+                                    : currentUser?.profilePicture
+                                    ? `${HOST_NAME}${currentUser?.profilePicture}`
                                     : images.defaultAvt
                             }
                             alt="avatar"
@@ -109,13 +145,15 @@ function Sidebar(checked) {
                     </div>
                     <div className={cx('user-details')}>
                         <span className={cx('username')}>
-                            {currentUser?.typeAccount === 'google'
+                            {updatedUser?.fullName
+                                ? updatedUser?.fullName
+                                : currentUser?.fullName
                                 ? currentUser?.fullName
                                 : currentUser?.username}
                         </span>
                         <span className={cx('email')}>
                             {currentUser?.email
-                                ? currentUser.email + 'aaaaaaaaaaaaaaaaa'
+                                ? currentUser.email
                                 : 'Chưa cập nhật email'}
                         </span>
                     </div>
@@ -140,10 +178,15 @@ function Sidebar(checked) {
                                 TK chính:{' '}
                             </span>
                             <span className={cx('balance-number')}>
-                                {currentUser &&
-                                    formatCash(
-                                        currentUser?.balance.toString(),
-                                    )}{' '}
+                                {updatedUser
+                                    ? formatCash(
+                                          updatedUser?.balance?.toString(),
+                                      )
+                                    : currentUser
+                                    ? formatCash(
+                                          currentUser?.balance?.toString(),
+                                      )
+                                    : ''}{' '}
                                 VND
                             </span>
                         </div>
@@ -164,14 +207,18 @@ function Sidebar(checked) {
                     </span>
                     <span className={cx('text')}>{postMngItems.title}</span>
                     <span className={cx('right-icon')}>
-                        {showPostItem ? (
+                        {showPostItem ||
+                        crMenu === 'new_post' ||
+                        crMenu === 'post_list' ? (
                             <MdOutlineKeyboardArrowUp />
                         ) : (
                             <MdOutlineKeyboardArrowRight />
                         )}
                     </span>
                 </div>
-                {postMngIndex !== -1 || showPostItem ? (
+                {showPostItem ||
+                crMenu === 'new_post' ||
+                crMenu === 'post_list' ? (
                     <>
                         {postMngItems.childrenTitle.map((item, index) => (
                             <Link to={item.to} key={index}>
@@ -181,6 +228,7 @@ function Sidebar(checked) {
                                         postMngIndex === index && 'active',
                                     )}
                                     onClick={() => {
+                                        setInfoMngIndex(-1);
                                         setFinancialMngIndex(-1);
                                         setUtilityMngIndex(-1);
                                         setCostsMngIndex(-1);
@@ -230,6 +278,7 @@ function Sidebar(checked) {
                                         financialMngIndex === index && 'active',
                                     )}
                                     onClick={() => {
+                                        setInfoMngIndex(-1);
                                         setPostMngIndex(-1);
                                         setUtilityMngIndex(-1);
                                         setCostsMngIndex(-1);
@@ -278,6 +327,7 @@ function Sidebar(checked) {
                                         costsMngIndex === index && 'active',
                                     )}
                                     onClick={() => {
+                                        setInfoMngIndex(-1);
                                         setPostMngIndex(-1);
                                         setFinancialMngIndex(-1);
                                         setUtilityMngIndex(-1);
@@ -326,10 +376,64 @@ function Sidebar(checked) {
                                         utilityMngIndex === index && 'active',
                                     )}
                                     onClick={() => {
+                                        setInfoMngIndex(-1);
                                         setCostsMngIndex(-1);
                                         setFinancialMngIndex(-1);
                                         setPostMngIndex(-1);
                                         setUtilityMngIndex(index);
+                                    }}
+                                >
+                                    <span className={cx('text')}>
+                                        {item.text}
+                                    </span>
+                                </div>
+                            </Link>
+                        ))}
+                    </>
+                ) : (
+                    ''
+                )}
+            </div>
+            <div className={cx('info-container')}>
+                <div
+                    className={cx(
+                        'info-management',
+                        infoMngIndex !== -1 && 'title-active',
+                    )}
+                    onClick={() => setShowInfoItem(!showInfoItem)}
+                >
+                    <span className={cx('left-icon')}>
+                        <AiOutlineUser />
+                    </span>
+                    <span className={cx('text')}>{infoItem.title}</span>
+                    <span className={cx('right-icon')}>
+                        {showInfoItem ||
+                        crMenu === 'change_password' ||
+                        crMenu === 'change_profile' ? (
+                            <MdOutlineKeyboardArrowUp />
+                        ) : (
+                            <MdOutlineKeyboardArrowRight />
+                        )}
+                    </span>
+                </div>
+
+                {showInfoItem ||
+                crMenu === 'change_password' ||
+                crMenu === 'change_profile' ? (
+                    <>
+                        {infoItem.childrenTitle.map((item, index) => (
+                            <Link to={item.to} key={index}>
+                                <div
+                                    className={cx(
+                                        'utility-item',
+                                        infoMngIndex === index && 'active',
+                                    )}
+                                    onClick={() => {
+                                        setCostsMngIndex(-1);
+                                        setFinancialMngIndex(-1);
+                                        setPostMngIndex(-1);
+                                        setUtilityMngIndex(-1);
+                                        setInfoMngIndex(index);
                                     }}
                                 >
                                     <span className={cx('text')}>

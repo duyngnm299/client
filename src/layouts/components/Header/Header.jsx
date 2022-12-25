@@ -1,11 +1,10 @@
 import classNames from 'classnames/bind';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Tippy from '@tippyjs/react';
 
 // import HeadLess from '@tippyjs/react/headless';
 
 import 'tippy.js/dist/tippy.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import styles from './Header.module.scss';
 import images from '~/assets/images';
@@ -15,38 +14,62 @@ import Image from '~/components/Image';
 import Saved from '~/components/Popper/Saved';
 // import Search from '../Search';
 import config from '~/config';
-import {
-    faBell,
-    faHeart,
-    faMessage,
-} from '@fortawesome/free-regular-svg-icons';
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-import Sidebar from '../Sidebar';
-const cx = classNames.bind(styles);
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeart } from '@fortawesome/free-regular-svg-icons';
 
-const saved_items = [
-    {
-        img: 'https://file4.batdongsan.com.vn/crop/350x232/2022/03/28/20220328171905-6295_wm.jpg',
-        title: 'Bảng giá Sunrise City- City View cập nhật giá bán T8.2022 (1PN-2.55tỷ), (2PN-3.5tỷ), (3PN-4.3tỷ)',
-        time: 'Vừa lưu xong',
-    },
-];
+import { useState, useEffect, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { getConvOfUser, getUser } from '~/api';
+import { currentMenu } from '~/redux/slice/menuSlice';
+import Notifications from './components/Notifications';
+import MessageBox from './components/MessageBox';
+
+const cx = classNames.bind(styles);
+const HOST_NAME = process.env.REACT_APP_HOST_NAME;
 
 function Header() {
     const [showSaved, setShowSaved] = useState(false);
+    const [savedItem, setSavedItem] = useState([]);
+    const [conversation, setConversation] = useState([]);
+    const savePost = useSelector((state) => state.post?.saved?.changeSaved);
+    const dispatch = useDispatch();
+    const currentUser = useSelector(
+        (state) => state.auth.login?.currentUser?.user,
+    );
+    const fullName = currentUser?.fullName;
+    const udtUser = useSelector(
+        (state) => state.auth.update?.currentUser?.user,
+    );
+    const udtFullName = udtUser?.fullName;
+    const newMsg = useSelector((state) => state.message.message?.msg);
+    console.log(newMsg);
+    useEffect(() => {
+        currentUser &&
+            getUser(currentUser?._id).then((res) => {
+                console.log(res?.user?.savedPost);
+                setSavedItem(res?.user?.savedPost);
+            });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-    const currentUser = useSelector((state) => state.auth.login.currentUser);
-    const googleUsername = currentUser?.user?.fullName;
-    console.log(googleUsername);
-    const navigate = useNavigate();
-    // console.log(showSaved);
-    // khi login thi currentUser = true
-    // const handleMenuChange = (menuItem) => {
-    //     console.log(menuItem);
-    // };
+    useEffect(() => {
+        currentUser &&
+            getUser(currentUser?._id).then((res) => {
+                setSavedItem(res?.user?.savedPost);
+            });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [savePost]);
 
+    useEffect(() => {
+        currentUser &&
+            getConvOfUser(currentUser._id)
+                .then((res) => setConversation(res.conversation))
+                .catch((err) => console.log(err));
+    }, [currentUser]);
+
+    const handleOnClick = () => {
+        currentUser && dispatch(currentMenu('new_post'));
+    };
     return (
         <header className={cx('wrapper')}>
             <div className={cx('inner')}>
@@ -98,12 +121,11 @@ function Header() {
                             >
                                 <div>
                                     <Saved
-                                        items={saved_items}
+                                        items={savedItem}
                                         show={showSaved}
                                         hide={() => {
                                             setShowSaved(false);
                                         }}
-                                        // onClick={() => showSaved}
                                     >
                                         <button
                                             className={cx('action-btn')}
@@ -115,40 +137,30 @@ function Header() {
                                                 icon={faHeart}
                                                 className={cx('icon')}
                                             />
+                                            {savedItem?.length > 0 && (
+                                                <span
+                                                    className={cx(
+                                                        'saved-count',
+                                                    )}
+                                                >
+                                                    {savedItem.length}
+                                                </span>
+                                            )}
                                         </button>
                                     </Saved>
                                 </div>
                             </Tippy>
-                            <Tippy
-                                content="Thông báo"
-                                delay={(0, 200)}
-                                placement="bottom"
-                            >
-                                <button className={cx('action-btn')}>
-                                    <FontAwesomeIcon
-                                        icon={faBell}
-                                        className={cx('icon')}
-                                    />
-                                </button>
-                            </Tippy>
-                            <Tippy
-                                content="Tin nhắn"
-                                delay={(0, 200)}
-                                placement="bottom"
-                            >
-                                <button className={cx('action-btn')}>
-                                    <FontAwesomeIcon
-                                        icon={faMessage}
-                                        className={cx('icon')}
-                                    />
-                                    <span className={cx('badge')}>12</span>
-                                </button>
-                            </Tippy>
+                            <Notifications />
+                            <MessageBox data={conversation} />
                             <Menu>
                                 <div className={cx('user-wrapper')}>
                                     <Image
                                         className={cx('user-avatar')}
-                                        src={currentUser?.user?.profilePicture}
+                                        src={
+                                            udtUser
+                                                ? `${HOST_NAME}${udtUser?.profilePicture}`
+                                                : `${HOST_NAME}${currentUser?.profilePicture}`
+                                        }
                                         alt="avatar"
                                         // Link ảnh gốc lỗi => set ảnh khác khác ảnh no Image
                                         fallBack={images.defaultAvt}
@@ -156,9 +168,13 @@ function Header() {
 
                                     <span className={cx('username')}>
                                         Hi,{' '}
-                                        {googleUsername
-                                            ? googleUsername
-                                            : currentUser?.user?.username}
+                                        {udtUser
+                                            ? udtFullName
+                                                ? udtFullName
+                                                : udtUser?.username
+                                            : fullName
+                                            ? fullName
+                                            : currentUser?.username}
                                     </span>
                                 </div>
                             </Menu>
@@ -178,7 +194,9 @@ function Header() {
                                 : config.routes.login
                         }
                     >
-                        <Button text>Đăng tin</Button>
+                        <Button onClick={handleOnClick} text>
+                            Đăng tin
+                        </Button>
                     </Link>
                 </div>
             </div>

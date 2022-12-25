@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import localStorage from 'redux-persist/es/storage';
 
 const authSlice = createSlice({
     name: 'auth',
@@ -11,7 +12,12 @@ const authSlice = createSlice({
         register: {
             isFetching: false,
             error: false,
-            success: false,
+            currentUser: null,
+        },
+        update: {
+            currentUser: null,
+            isFetching: false,
+            error: false,
         },
     },
     reducers: {
@@ -32,15 +38,14 @@ const authSlice = createSlice({
         registerStart: (state) => {
             state.register.isFetching = true;
         },
-        registerSuccess: (state) => {
+        registerSuccess: (state, action) => {
             state.register.isFetching = false;
             state.register.error = false;
-            state.register.success = true;
+            state.register.currentUser = action.payload;
         },
         registerFailed: (state, action) => {
             state.register.isFetching = false;
             state.register.error = action.payload;
-            state.register.success = false;
         },
         // Logout
         logOutStart: (state) => {
@@ -49,14 +54,41 @@ const authSlice = createSlice({
         logOutSuccess: (state) => {
             state.login.isFetching = false;
             state.login.currentUser = null;
+            state.update.currentUser = null;
             state.login.error = false;
+            // localStorage.removeItem('persist:root');
         },
         logOutFailed: (state) => {
             state.login.isFetching = false;
             state.login.error = true;
         },
+        updatedStart: (state) => {
+            state.update.isFetching = true;
+        },
+        updatedUser(state, action) {
+            state.update.isFetching = false;
+            state.update.currentUser = action.payload;
+            state.update.error = false;
+        },
     },
 });
+// const userSlice = createSlice({
+//     name: 'user',
+//     initialState: {
+//         current: JSON.parse(localStorage.getItem('auth')),
+//     },
+//     reducers: {
+//         logout(state) {
+//             //clear localStorage
+//             localStorage.removeItem('auth');
+//             state.current = null;
+//         },
+
+//         updateNotification(state, action) {
+//             state.notification = action.payload;
+//         },
+//     },
+// });
 
 export const {
     loginStart,
@@ -68,5 +100,7 @@ export const {
     logOutStart,
     logOutSuccess,
     logOutFailed,
+    updatedStart,
+    updatedUser,
 } = authSlice.actions;
 export default authSlice.reducer;

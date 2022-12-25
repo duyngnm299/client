@@ -3,6 +3,7 @@
     flex-direction: column;
     width: 100%;
     height: calc(100vh - var(--default-layout-header-height) + 8px);
+    position: relative;
 }
 
 .heading {

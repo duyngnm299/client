@@ -41,6 +41,7 @@ function Login() {
     const handlePasswordChange = (value) => {
         setPassword(value);
     };
+
     function handleGoogleLoginSuccess(tokenResponse) {
         const accessToken = tokenResponse.access_token;
         // signInGoogle(accessToken, navigate, dispatch);
@@ -65,8 +66,8 @@ function Login() {
             username: username,
             password: password,
         };
-        setMessage(true);
         if (!username || !password || password.length < 8) {
+            setMessage(true);
             return;
         }
         dispatch(loginStart);
@@ -153,11 +154,14 @@ function Login() {
                                     <AiOutlineUser />
                                 </div>
                                 <input
-                                    pattern="[^' ']+"
+                                    onKeyDown={(e) => {
+                                        if (e.code === 'Space') {
+                                            e.preventDefault();
+                                        }
+                                    }}
                                     value={username}
                                     className={cx(
                                         'input',
-
                                         !username && message && 'invalid',
                                     )}
                                     type="text"
@@ -175,9 +179,13 @@ function Login() {
                                     value={password}
                                     className={cx(
                                         'input',
-
                                         !password && message && 'invalid',
                                     )}
+                                    onKeyDown={(e) => {
+                                        if (e.code === 'Space') {
+                                            e.preventDefault();
+                                        }
+                                    }}
                                     type="password"
                                     placeholder="Mật khẩu"
                                     onChange={(e) => {
@@ -216,11 +224,13 @@ function Login() {
                                     Nhớ tài khoản
                                 </span>
                             </div>
-                            <div className={cx('forgot')}>
-                                <span className={cx('forgot-text')}>
-                                    Quên mật khẩu?
-                                </span>
-                            </div>
+                            <Link to={config.routes.forgotPassword}>
+                                <div className={cx('forgot')}>
+                                    <span className={cx('forgot-text')}>
+                                        Quên mật khẩu?
+                                    </span>
+                                </div>
+                            </Link>
                         </div>
                         <div className={cx('or')}>
                             <div className={cx('line')}></div>

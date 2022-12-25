@@ -1,5 +1,17 @@
+import SearchResult from '~/components/SearchResult';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { SearchFilterPost } from '~/api';
+import { currentCategory, filterResult } from '~/redux/slice/filterSlice';
 function Apartment() {
-    return <h2>Chung cư, căn hộ</h2>;
+    const dispatch = useDispatch();
+    useEffect(() => {
+        SearchFilterPost('category_name=Chung cư - căn hộ').then(
+            (res) => dispatch(filterResult(res)),
+            dispatch(currentCategory('Chung cư - căn hộ')),
+        );
+    }, []);
+    return <SearchResult />;
 }
 
 export default Apartment;

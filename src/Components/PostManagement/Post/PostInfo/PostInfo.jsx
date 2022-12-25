@@ -1,7 +1,6 @@
 import React from 'react';
 import classNames from 'classnames/bind';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faAsterisk,
@@ -9,20 +8,25 @@ import {
     faPlus,
     faXmark,
 } from '@fortawesome/free-solid-svg-icons';
+import { IoCloseOutline } from 'react-icons/io5';
 import { UploadImage } from '~/components/Icons';
 import { BsChevronDown } from 'react-icons/bs';
 import Button from '~/components/Button';
 import { address_list } from '~/components/AddressList';
 import { useSelector } from 'react-redux';
 import { useRef } from 'react';
-import { getAllCategories, createPost } from '~/api';
+import { getAllCategories, createPost, updateUser } from '~/api';
 import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import styles from './PostInfo.module.scss';
 import { FiCalendar } from 'react-icons/fi';
+import styles from './PostInfo.module.scss';
 import Mapbox from '~/components/Mapbox';
-
-// import GoongMap from '~/components/GoongMap';
+import { useDispatch } from 'react-redux';
+import { updatedStart, updatedUser } from '~/redux/slice/authSlice';
+import Swal from 'sweetalert2';
+import 'sweetalert2/src/sweetalert2.scss';
+import { useNavigate } from 'react-router-dom';
+import { sendMail } from '~/api';
 const cx = classNames.bind(styles);
 const initialValue = 0;
 const postTypeItems = [
@@ -91,10 +95,18 @@ const handleDate = (
 };
 function PostInfo() {
     const currentUser = useSelector((state) => state.auth.login?.currentUser);
+    const udtUser = useSelector((state) => state.auth.update?.currentUser);
+    console.log(currentUser);
+    console.log(udtUser);
+    let balance = currentUser?.user?.balance;
+    let updateBalance = udtUser?.user?.balance;
+    console.log(currentUser?.user?.balance);
     const userId = currentUser?.user?._id;
     const fullName = currentUser?.user?.fullName;
     const email = currentUser?.user?.email;
     const phoneNumber = currentUser?.user?.phoneNumber;
+    const udtPhone = udtUser?.user?.phoneNumber;
+    const udtFullName = udtUser?.user?.fullName;
     // Basic info state
     const [category, setCategory] = useState(false);
     const [categoryList, setCategoryList] = useState([]);
@@ -131,9 +143,11 @@ function PostInfo() {
     const [furniture, setFurniture] = useState('');
     const [file, setFile] = useState([]);
     // Contact info state
-    const [contactName, setContactName] = useState(fullName);
+    const [contactName, setContactName] = useState(
+        fullName || udtFullName || '',
+    );
     const [contactPhoneNumber, setContactPhoneNumber] = useState(
-        phoneNumber || '',
+        phoneNumber || udtPhone || '',
     );
     const [contactAddress, setContactAddress] = useState(
         valueInputAddress || '',
@@ -156,6 +170,10 @@ function PostInfo() {
         return `${result[0]}/${result[1]}/${result[2]}`;
     });
     const [pricePostType, setPricePostType] = useState(10000);
+    const [showModal, setShowModal] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const categoryRef = useRef();
     const provinceRef = useRef();
     const districtRef = useRef();
@@ -232,7 +250,7 @@ function PostInfo() {
     const handleChangeFurniture = (e) => {
         setFurniture(e.target.value);
     };
-    const handleChangeImage = async (e) => {
+    const handleChangeImage = (e) => {
         setImage(e.target.files);
         // setImage(e.target.files);
         Object.entries(e.target.files).map((item) =>
@@ -261,7 +279,7 @@ function PostInfo() {
     const handleChangeContactEmail = (e) => {
         setContactEmail(e.target.value);
     };
-    const handleClick = (e) => {
+    const handleContinueClick = (e) => {
         e.preventDefault();
         setShowNotify(true);
         if (categoryValue.length === 0) {
@@ -317,23 +335,34 @@ function PostInfo() {
             contactEmailRef.current.focus();
             return;
         }
-
+        setShowModal(true);
         setShowNotify(false);
+    };
+    const handleClick = () => {
+        if (udtUser ? updateBalance < total_cost : balance < total_cost) {
+            alert(
+                'Đăng tin thất bại!',
+                'error',
+                'Tài khoản của bạn không đủ để thanh toán!',
+            );
+            setShowModal(false);
+            return;
+        }
         const formData = new FormData();
         formData.append('category_id', categoryId);
         formData.append('category_name', categoryValue);
         formData.append('title', titlePost);
         formData.append(
             'describe',
-            JSON.stringify([
-                { describe },
-                { areaValue },
-                { price },
-                { bedroom },
-                { restroom },
-                { floor },
-                { furniture },
-            ]),
+            JSON.stringify({
+                describe,
+                areaValue,
+                price,
+                bedroom,
+                restroom,
+                floor,
+                furniture,
+            }),
         );
         formData.append('address', valueInputAddress);
         formData.append('province', provinceValue);
@@ -345,12 +374,12 @@ function PostInfo() {
         formData.append('createdBy', userId);
         formData.append(
             'userInfo',
-            JSON.stringify([
-                { contactName },
-                { contactPhoneNumber },
-                { contactAddress },
-                { contactEmail },
-            ]),
+            JSON.stringify({
+                contactName,
+                contactPhoneNumber,
+                contactAddress,
+                contactEmail,
+            }),
         );
         for (let i = 0; i < images.length; i++) {
             formData.append('images', images[i]);
@@ -359,7 +388,6 @@ function PostInfo() {
         formData.append('numberDayPost', datePostValue);
         formData.append('startDate', date.toLocaleDateString());
         formData.append('endDate', dateFinished);
-
         createPost(formData)
             .then((res) => {
                 const data = res.data;
@@ -368,6 +396,28 @@ function PostInfo() {
             .catch((err) => {
                 console.log(err);
             });
+
+        let newBalance = 0;
+
+        newBalance = udtUser
+            ? updateBalance - total_cost
+            : balance - total_cost;
+
+        console.log(newBalance);
+        const data = JSON.stringify({ balance: newBalance });
+        dispatch(updatedStart());
+        updateUser(userId, data)
+            .then((res) => {
+                console.log(res);
+                dispatch(updatedUser(res));
+                alert(
+                    'Đăng tin thành công!',
+                    'success',
+                    'Tin của bạn đang được quản trị viên kiểm duyệt!',
+                );
+                setShowModal(false);
+            })
+            .catch((error) => console.log(error));
     };
 
     // POST TYPE
@@ -393,10 +443,34 @@ function PostInfo() {
             .split('')
             .reverse()
             .reduce((prev, next, index) => {
-                return (index % 3 ? next : next + ',') + prev;
+                return (index % 3 ? next : next + '.') + prev;
             });
     };
-    const totalCost = datePostValue * pricePostType;
+    const cost = datePostValue * pricePostType;
+    const total_cost = cost + cost / 10;
+    console.log(total_cost);
+    const alert = (title, type, message) => {
+        setShowAlert(true);
+        Swal.fire({
+            title: `<h2 class="notify-title">${title}</h2>`,
+            icon: type,
+            html: `<p style="font-size: 1.4rem; margin: 0 0 20px 0">${message}</p>`,
+            confirmButtonText:
+                '<p style="font-size: 16px; padding: 10px;">Xác nhận</p>',
+            confirmButtonColor: type === 'success' ? '#a5dc86' : '#e03c31',
+            allowOutsideClick: false,
+            focusConfirm: false,
+            width: '500px',
+            padding: '30px 20px',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                setShowAlert(false);
+                type === 'success' &&
+                    navigate('/quan-ly-bai-dang/danh-sach-tin-dang');
+            }
+        });
+    };
+    console.log(areaValue);
     return (
         <div className={cx('wrapper')}>
             <div className={cx('info')}>
@@ -467,15 +541,6 @@ function PostInfo() {
                                         ''
                                     )}
                                 </div>
-                                {showNotify && categoryValue.length === 0 ? (
-                                    <span className={cx('validate')}>
-                                        {categoryValue.length === 0
-                                            ? 'Cần nhập thông tin này'
-                                            : ''}
-                                    </span>
-                                ) : (
-                                    ''
-                                )}
                             </div>
                         </div>
                         <p className={cx('address-title')}>Địa chỉ</p>
@@ -1027,6 +1092,7 @@ function PostInfo() {
                             </label>
                             <textarea
                                 className={cx('post-title-details')}
+                                ref={titleRef}
                                 value={titlePost}
                                 id="title"
                                 placeholder="VD: Bán nhà riêng 50m2 chính chủ tại Cầu Giấy"
@@ -1085,6 +1151,7 @@ function PostInfo() {
                             </label>
                             <textarea
                                 className={cx('describe')}
+                                ref={describeRef}
                                 value={describe}
                                 id="describe"
                                 placeholder="Nhập mô tả chung về bất động sản của bạn. Ví dụ: Khu nhà có vị trí thuận lợi, gần công viên, gần trường học ... "
@@ -1153,7 +1220,13 @@ function PostInfo() {
                                     name="area"
                                     required
                                     placeholder="Nhập diện tích, VD 50"
+                                    onWheel={(e) => e.target.blur()}
                                     onChange={handleChangeArea}
+                                    onKeyPress={(event) => {
+                                        if (!/[0-9]/.test(event.key)) {
+                                            event.preventDefault();
+                                        }
+                                    }}
                                 />
                                 <span className={cx('square-metre')}>m²</span>
                             </div>
@@ -1190,6 +1263,7 @@ function PostInfo() {
                                     type="number"
                                     id="price"
                                     name="price"
+                                    onWheel={(e) => e.target.blur()}
                                     placeholder={
                                         priceUnitValue === 'Thỏa thuận'
                                             ? 'Giá thỏa thuận'
@@ -1202,6 +1276,11 @@ function PostInfo() {
                                     }
                                     required
                                     onChange={handleChangePrice}
+                                    onKeyPress={(event) => {
+                                        if (!/[0-9]/.test(event.key)) {
+                                            event.preventDefault();
+                                        }
+                                    }}
                                 />
                                 {priceUnitValue !== 'Thỏa thuận'
                                     ? showNotify &&
@@ -1652,7 +1731,7 @@ function PostInfo() {
                             <Button
                                 primary
                                 className={cx('btn-next')}
-                                onClick={handleClick}
+                                onClick={handleContinueClick}
                             >
                                 Tiếp tục
                             </Button>
@@ -1801,46 +1880,159 @@ function PostInfo() {
                                 {datePostValue} ngày
                             </span>
                         </div>
-                        {pricePostType === 20000 && (
-                            <div className={cx('row')}>
-                                <span className={cx('left')}>Phí đăng tin</span>
-                                <span className={cx('right')}>
-                                    {formatCash(totalCost.toString())}
-                                    <span className={cx('unit')}> VND</span>
-                                </span>
-                            </div>
-                        )}
 
-                        <div className={cx('line')}></div>
-                        {pricePostType === 20000 && (
-                            <div className={cx('row')}>
-                                <span className={cx('left')}>VAT</span>
-                                <span className={cx('right')}>10%</span>
-                            </div>
-                        )}
                         <div className={cx('row')}>
-                            <span className={cx('left')}>
-                                {pricePostType === 20000
-                                    ? 'Tổng cộng'
-                                    : 'Bạn trả'}
-                            </span>
-                            <span className={cx('right', 'total')}>
-                                {pricePostType === 20
-                                    ? formatCash(
-                                          (totalCost + totalCost / 10).toString,
-                                      )
-                                    : formatCash(totalCost.toString())}{' '}
-                                <span className={cx('unit')}>VND</span>
+                            <span className={cx('left')}>Phí đăng tin</span>
+                            <span className={cx('right')}>
+                                {formatCash(cost.toString())}
+                                <span className={cx('unit')}> VND</span>
                             </span>
                         </div>
-                        <span className={cx('notify')}>
-                            Tài khoản của bạn không đủ để thanh toán phí cho tin
-                            đăng này. Vui lòng nạp đúng số tiền để hoàn tất đăng
-                            tin.
-                        </span>
+
+                        <div className={cx('line')}></div>
+
+                        <div className={cx('row')}>
+                            <span className={cx('left')}>VAT</span>
+                            <span className={cx('right')}>10%</span>
+                        </div>
+
+                        <div className={cx('row')}>
+                            <span className={cx('left')}>Bạn trả</span>
+                            <span className={cx('right', 'total')}>
+                                {formatCash(total_cost.toString())}
+                                <span className={cx('unit')}> VND</span>
+                            </span>
+                        </div>
+                        {updateBalance < total_cost || balance < total_cost ? (
+                            <span className={cx('notify')}>
+                                Tài khoản của bạn không đủ để thanh toán phí cho
+                                tin đăng này. Vui lòng nạp đúng số tiền để hoàn
+                                tất đăng tin.
+                            </span>
+                        ) : (
+                            ''
+                        )}
                     </div>
                 </div>
             </div>
+            {showModal && (
+                <div
+                    className={cx('modal')}
+                    onClick={() => setShowModal(false)}
+                >
+                    <div
+                        className={cx('modal-content')}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className={cx('modal-header')}>
+                            <p className={cx('title-header')}>
+                                Xem lại thông tin
+                            </p>
+                            <IoCloseOutline
+                                className={cx('close')}
+                                onClick={() => setShowModal(false)}
+                            />
+                        </div>
+                        <div className={cx('modal-info')}>
+                            <div className={cx('top')}>
+                                <p className={cx('title-post')}>
+                                    {titlePost ||
+                                        'Cho thuê phòng trọ dành cho sinh viên giá rẻ'}
+                                </p>
+                                <div className={cx('price-area')}>
+                                    <span>
+                                        {formatCash(`${price.toString()}`)}{' '}
+                                    </span>
+                                    <span className={cx('unit')}>VND</span>
+                                    <span className={cx('dot')}>·</span>
+                                    <span>{areaValue}</span>
+                                    <span className={cx('unit')}>m²</span>
+                                </div>
+                                <div className={cx('line-modal')}></div>
+                                <div className={cx('modal-post-type')}>
+                                    <div className={cx('type-item')}>
+                                        <span className={cx('text')}>
+                                            Loại tin
+                                        </span>
+                                        <span className={cx('text')}>
+                                            {typeValue}
+                                        </span>
+                                    </div>
+                                    <div className={cx('type-item')}>
+                                        <span className={cx('text')}>
+                                            Thời gian đăng tin
+                                        </span>
+                                        <span className={cx('text')}>
+                                            {date.toLocaleDateString()} -{' '}
+                                            {dateFinished}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={cx('bottom')}>
+                                <div className={cx('bottom-item')}>
+                                    <span className={cx('text')}>
+                                        Đơn giá / ngày
+                                    </span>
+                                    <span className={cx('text')}>
+                                        {formatCash(
+                                            `${pricePostType.toString()}`,
+                                        )}{' '}
+                                        VND
+                                    </span>
+                                </div>
+                                <div className={cx('bottom-item')}>
+                                    <span className={cx('text')}>
+                                        Số ngày đăng tin
+                                    </span>
+                                    <span className={cx('text')}>
+                                        {datePostValue} ngày
+                                    </span>
+                                </div>
+
+                                <div className={cx('bottom-item')}>
+                                    <span className={cx('text')}>VAT</span>
+                                    <span className={cx('text')}>10%</span>
+                                </div>
+
+                                <div className={cx('line-price')}></div>
+                                <div
+                                    className={cx(
+                                        'bottom-item',
+                                        'bottom-item-total',
+                                    )}
+                                >
+                                    <span className={cx('text')}>Bạn trả</span>
+                                    <span className={cx('totalCosts')}>
+                                        {formatCash(total_cost.toString())}
+                                        <span className={cx('text')}>VND</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={cx('footer')}>
+                            <div className={cx('footer-container')}>
+                                <div className={cx('footer-item')}>
+                                    <button
+                                        className={cx('btn-change')}
+                                        onClick={() => setShowModal(false)}
+                                    >
+                                        Thay đổi
+                                    </button>
+                                </div>
+                                <div className={cx('footer-item')}>
+                                    <button
+                                        className={cx('btn-submit')}
+                                        onClick={handleClick}
+                                    >
+                                        Thanh toán và đăng tin
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

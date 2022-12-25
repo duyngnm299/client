@@ -1,5 +1,9 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import authReducer from '../slice/authSlice';
+import postReducer from '../slice/postSlice';
+import filterReducer from '../slice/filterSlice';
+import menuReducer from '../slice/menuSlice';
+import messageReducer from '../slice/messageSlice';
 // import userReducer from './userSlice';
 import {
     persistStore,
@@ -18,7 +22,13 @@ const persistConfig = {
     version: 1,
     storage,
 };
-const rootReducer = combineReducers({ auth: authReducer });
+const rootReducer = combineReducers({
+    auth: authReducer,
+    post: postReducer,
+    filter: filterReducer,
+    menu: menuReducer,
+    message: messageReducer,
+});
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({

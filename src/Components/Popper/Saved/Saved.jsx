@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames/bind';
 import { useState } from 'react';
+import images from '~/assets/images';
+
 import Tippy from '@tippyjs/react/headless';
 import { Wrapper as PopperWrapper } from '~/components/Popper';
 import styles from './Saved.module.scss';
@@ -19,11 +21,9 @@ function Saved({
     hide,
     // onChange = defaultFn,
 }) {
-    const [history, setHistory] = useState([{ data: items }]);
-    const current = history[history.length - 1];
-
+    console.log(items);
     const renderItems = () => {
-        return current.data.map((item, index) => {
+        return items?.map((item, index) => {
             return <SavedItem key={index} data={item}></SavedItem>;
         });
     };
@@ -32,7 +32,24 @@ function Saved({
         <div className={cx('saved-list')} tabIndex="-1" {...attrs}>
             <PopperWrapper className={cx('saved-popper')}>
                 <span className={cx('header')}>Tin đã lưu</span>
-                <div className={cx('saved-body')}>{renderItems()}</div>
+                <div
+                    className={cx(
+                        'saved-body',
+                        items.length > 0 && 'have-item',
+                    )}
+                >
+                    {items.length > 0 ? (
+                        renderItems()
+                    ) : (
+                        <div className={cx('saved-item')}>
+                            <img
+                                src={images.emptySaved}
+                                alt="a"
+                                className={cx('empty-image')}
+                            />
+                        </div>
+                    )}
+                </div>
                 <div className={cx('see-all')}>
                     <p className={cx('text')}>
                         Xem tất cả{' '}

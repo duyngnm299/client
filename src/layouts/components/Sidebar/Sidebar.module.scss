@@ -5,8 +5,8 @@
     flex-direction: column;
     box-shadow: rgba(182, 182, 182, 0.18) 0px 4px 8px;
     position: sticky;
-    top: 0px;
-    bottom: 0px;
+    top: 0;
+    bottom: 0;
     height: calc(100vh - var(--default-layout-header-height) + 8px);
     overflow: auto;
     max-height: calc(100vh - var(--default-layout-header-height) + 8px);
@@ -314,4 +314,24 @@
     border-left: 3px solid var(--primary);
     background-color: rgb(242, 242, 242);
     font-weight: 500;
+}
+
+.info-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.info-management {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px 12px 16px;
+    line-height: 2.2rem;
+    user-select: none;
+    cursor: pointer;
+
+    &:hover {
+        background-color: rgb(242, 242, 242);
+    }
 }

@@ -1,0 +1,18 @@
+.wrapper {
+    display: flex;
+    justify-content: center;
+    max-width: var(--default-layout-width);
+    margin-top: 57px;
+    height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(204, 204, 204) transparent;
+}
+
+.content {
+    display: flex;
+    width: 936px;
+    height: 100%;
+    margin-top: 24px;
+}

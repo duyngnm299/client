@@ -15,7 +15,29 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { logOut } from '~/api/index';
 import { logOutSuccess, registerFailed } from '~/redux/slice/authSlice';
+import { currentMenu } from '~/redux/slice/menuSlice';
 const cx = classNames.bind(styles);
+const menuItem = [
+    {
+        to: config.routes.postlist,
+        text: 'Quản lý tin đăng',
+        icon: <FontAwesomeIcon icon={faBars} />,
+    },
+    {
+        to: config.routes.profile,
+        text: 'Thay đổi thông tin cá nhân',
+        icon: <FontAwesomeIcon icon={faUser} />,
+    },
+    {
+        to: config.routes.password,
+        text: 'Thay đổi mật khẩu',
+        icon: <FontAwesomeIcon icon={faLock} />,
+    },
+    {
+        text: 'Đăng xuất',
+        icon: <FontAwesomeIcon icon={faRightFromBracket} />,
+    },
+];
 function MenuItem() {
     const currentUser = useSelector((state) => state.auth.login.currentUser);
     const id = currentUser._id;
@@ -27,54 +49,42 @@ function MenuItem() {
     const handleLogout = () => {
         logOut(dispatch, id, navigate, accessToken, axiosJWT);
     };
+    const handleOnClick = (index) => {
+        switch (index) {
+            case 0:
+                dispatch(currentMenu('post_list'));
+                return;
+            case 1:
+                dispatch(currentMenu('change_profile'));
+                return;
+            case 2:
+                dispatch(currentMenu('change_password'));
+                return;
+            case 3:
+                handleLogout();
+                return;
+            default:
+                break;
+        }
+    };
+
     return (
         <>
-            <Link to={config.routes.post}>
-                <div className={cx('menu-item')}>
-                    <div className={cx('abc')}>
-                        <span className={cx('menu-icon')}>
-                            <FontAwesomeIcon icon={faBars} />
-                        </span>
-                        <span className={cx('menu-title')}>
-                            Quản lý tin đăng
-                        </span>
+            {menuItem.map((item, index) => (
+                <Link to={item?.to && item.to} key={index}>
+                    <div
+                        className={cx('menu-item')}
+                        onClick={() => handleOnClick(index)}
+                    >
+                        <div className={cx('abc')}>
+                            <span className={cx('menu-icon')}>{item.icon}</span>
+                            <span className={cx('menu-title')}>
+                                {item.text}
+                            </span>
+                        </div>
                     </div>
-                </div>
-            </Link>
-
-            <Link to={config.routes.profile}>
-                <div className={cx('menu-item')}>
-                    <div className={cx('abc')}>
-                        <span className={cx('menu-icon')}>
-                            <FontAwesomeIcon icon={faUser} />
-                        </span>
-                        <span className={cx('menu-title')}>
-                            Thay đổi thông tin cá nhân
-                        </span>
-                    </div>
-                </div>
-            </Link>
-
-            <Link to={config.routes.password}>
-                <div className={cx('menu-item')}>
-                    <div className={cx('abc')}>
-                        <span className={cx('menu-icon')}>
-                            <FontAwesomeIcon icon={faLock} />
-                        </span>
-                        <span className={cx('menu-title')}>
-                            Thay đổi mật khẩu
-                        </span>
-                    </div>
-                </div>
-            </Link>
-            <div className={cx('menu-item')} onClick={handleLogout}>
-                <div className={cx('abc')}>
-                    <span className={cx('menu-icon')}>
-                        <FontAwesomeIcon icon={faRightFromBracket} />
-                    </span>
-                    <span className={cx('menu-title')}>Đăng xuất</span>
-                </div>
-            </div>
+                </Link>
+            ))}
         </>
     );
 }

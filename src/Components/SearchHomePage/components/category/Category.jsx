@@ -8,117 +8,84 @@ import { AiOutlineHome } from 'react-icons/ai';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 // import CategoryItem from './CategoryItem';
 import Tippy from '@tippyjs/react';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { BiRefresh } from 'react-icons/bi';
 import { useEffect } from 'react';
-import userEvent from '@testing-library/user-event';
-
+import { getAllCategories } from '~/api';
+import { useDispatch, useSelector } from 'react-redux';
+import { currentCategory } from '~/redux/slice/filterSlice';
 const cx = classNames.bind(styles);
 
-const category_items = [
-    {
-        icon: <AiOutlineHome />,
-        text: 'Phòng trọ',
-        isChecked: false,
-    },
-    {
-        icon: <AiOutlineHome />,
-        text: 'Nhà nguyên căn',
-        isChecked: false,
-    },
-    {
-        icon: <AiOutlineHome />,
-        text: 'Nhà mặt phố',
-        isChecked: false,
-    },
-    {
-        icon: <AiOutlineHome />,
-        text: 'Văn phòng',
-        isChecked: false,
-    },
-    {
-        icon: <AiOutlineHome />,
-        text: 'Chung cư - căn hộ',
-        isChecked: false,
-    },
-    {
-        icon: <AiOutlineHome />,
-        text: 'Mặt bằng',
-        isChecked: false,
-    },
-];
 // const defaultFn = () => {};
-function Category({
-    icon,
-    show = false,
-    children,
-
-    hide,
-    // onChange = defaultFn,
-}) {
+function Category({ className }) {
+    const crCategory = useSelector(
+        (state) => state.filter.category?.currentCategory,
+    );
+    const dispatch = useDispatch();
     const [data, setData] = useState([]);
-    const [nameCategory, setNameCategory] = useState([]);
+    const [categoryList, setCategoryList] = useState([]);
     const [showCategory, setShowCategory] = useState(false);
+    const [checkedIndex, setCheckedIndex] = useState(-1);
     const [checked, setChecked] = useState([]);
     const [ipChecked, setIpCheck] = useState(true);
-    // const nameCategory = [];
 
     useEffect(() => {
-        setData(category_items);
+        getAllCategories().then((res) => {
+            setData(res.data);
+        });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+    useEffect(() => {
+        setCategoryList(data.map((item) => ({ ...item, isChecked: false })));
+    }, [data]);
     const handleChange = (e) => {
         const { name } = e.target;
-
-        let itemChecked = category_items[name];
-        let updateList = [...checked];
+        setCheckedIndex(parseInt(name));
+        let itemChecked = categoryList[name];
 
         if (e.target.checked) {
             setIpCheck(true);
             itemChecked = { ...itemChecked, isChecked: true };
-            updateList.push(itemChecked);
-            console.log(updateList);
-            category_items[name].isChecked = true;
-            setNameCategory([...nameCategory, itemChecked.text]);
+            setChecked([itemChecked]);
+            categoryList[name].isChecked = true;
+            dispatch(currentCategory(itemChecked.category_name));
         } else {
-            let newItemChecked = { ...itemChecked, isChecked: false };
-            console.log(newItemChecked);
-            category_items[name].isChecked = false;
-
-            updateList = updateList.filter(
-                (item) => !item.text.includes(newItemChecked.text),
-            );
-
-            setNameCategory(
-                nameCategory.filter((item) => item !== newItemChecked.text),
-            );
-            console.log(updateList);
+            setChecked(false);
+            categoryList[name].isChecked = false;
+            dispatch(currentCategory(null));
+            setChecked([]);
         }
-        setChecked(updateList);
     };
 
-    console.log(checked);
-
     const renderItems = () => {
-        return data.map((item, index) => {
+        return categoryList.map((item, index) => {
             return (
                 <label
                     key={index}
                     htmlFor={`checkbox${index}`}
-                    className={cx('category-item')}
+                    className={cx(
+                        'category-item',
+                        className && 'category-sb-item',
+                    )}
                 >
-                    <span className={cx('icon')}>{icon}</span>
-                    <span className={cx('text')}>{item.text}</span>
+                    <span className={cx('icon')}>
+                        {' '}
+                        <AiOutlineHome />
+                    </span>
+                    <span className={cx('text')}>{item.category_name}</span>
                     <input
-                        name={index}
-                        value={{ item }}
                         id={`checkbox${index}`}
                         className={cx('checkbox')}
                         type="checkbox"
+                        name={index}
+                        value={{ item }}
                         checked={
-                            ipChecked
-                                ? category_items[index]?.isChecked
-                                : ipChecked
+                            ipChecked &&
+                            categoryList[index].isChecked &&
+                            index === checkedIndex
+                                ? true
+                                : false
                         }
                         onChange={handleChange}
                     />
@@ -130,12 +97,16 @@ function Category({
     const handleRefresh = () => {
         setIpCheck(false);
         setChecked([]);
-        setNameCategory([]);
-        category_items.map((item) => (item.isChecked = false));
+        categoryList.map((item) => (item.isChecked = false));
+        dispatch(currentCategory(null));
     };
 
     const renderResult = (attrs) => (
-        <div className={cx('category-list')} tabIndex="-1" {...attrs}>
+        <div
+            className={cx('category-list', className && 'category-sb-list')}
+            tabIndex="-1"
+            {...attrs}
+        >
             <PopperWrapper className={cx('category-popper')}>
                 <div className={cx('category-body')}>{renderItems()}</div>
                 <div className={cx('refresh')}>
@@ -143,28 +114,97 @@ function Category({
                         <BiRefresh className={cx('rf-icon')} />
                         <p className={cx('rf-text')}>Đặt lại</p>
                     </div>
-                    <button className={cx('btn-refresh')}>Áp dụng</button>
+                    <button
+                        className={cx('btn-refresh')}
+                        onClick={() => setShowCategory(false)}
+                    >
+                        Áp dụng
+                    </button>
                 </div>
             </PopperWrapper>
         </div>
     );
     // console.log(nameCategory);
-    return (
+    return className ? (
+        <div>
+            <HeadlessTippy
+                // visible
+                visible={showCategory}
+                delay={[0, 1000]}
+                offset={className ? [68, 12] : [90, 8]}
+                interactive
+                placement="bottom-end"
+                render={renderResult}
+                onClickOutside={() => setShowCategory(false)}
+            >
+                <div
+                    className={cx(
+                        'category',
+                        className && 'category-search-bar',
+                    )}
+                    onClick={() => setShowCategory(!showCategory)}
+                >
+                    {className ? (
+                        <>
+                            <div className={cx('category-sb-item')}>
+                                <div className={cx('title-wrapper')}>
+                                    <span className={cx('title')}>
+                                        Phân loại
+                                    </span>
+                                    <span>
+                                        <FontAwesomeIcon
+                                            className={cx('arrow-down')}
+                                            icon={faChevronDown}
+                                        />
+                                    </span>
+                                </div>
+
+                                <p className={cx('sort-value')}>
+                                    {' '}
+                                    {crCategory && checked[0]
+                                        ? checked[0].category_name
+                                        : 'Tất cả'}
+                                </p>
+                            </div>
+                        </>
+                    ) : crCategory && checked.length > 0 ? (
+                        <>
+                            <span className={cx('icon-left')}>
+                                <AiOutlineHome />
+                            </span>
+                            <span className={cx('text-ctgr')}>
+                                {' '}
+                                {crCategory && checked[0].category_name}
+                            </span>
+                            <span className={cx('icon-right')}>
+                                <MdKeyboardArrowDown />
+                            </span>
+                        </>
+                    ) : (
+                        <>
+                            <span className={cx('icon-left')}>
+                                <AiOutlineHome />
+                            </span>
+                            <span className={cx('text-ctgr')}>
+                                Loại tìm kiếm
+                            </span>
+                            <span className={cx('icon-right')}>
+                                <MdKeyboardArrowDown />
+                            </span>
+                        </>
+                    )}
+                </div>
+            </HeadlessTippy>
+        </div>
+    ) : (
         <Tippy
             className={cx('tippy-content')}
             content={
-                nameCategory ? (
-                    <div>
-                        {nameCategory?.map((name, index) => (
-                            <div key={index} style={{ fontSize: '1.2rem' }}>
-                                {name}
-                                <br />
-                            </div>
-                        ))}
-                    </div>
-                ) : null
+                checked.length > 0 && crCategory
+                    ? checked[0].category_name
+                    : null
             }
-            disabled={!nameCategory[0] ? true : false}
+            disabled={checked.length === 0 ? true : false}
             delay={(0, 200)}
             placement="bottom"
         >
@@ -173,24 +213,50 @@ function Category({
                     // visible
                     visible={showCategory}
                     delay={[0, 1000]}
-                    offset={[90, 8]}
+                    offset={className ? [70, 8] : [90, 8]}
                     interactive
                     placement="bottom-end"
                     render={renderResult}
                     onClickOutside={() => setShowCategory(false)}
                 >
                     <div
-                        className={cx('category')}
+                        className={cx(
+                            'category',
+                            className && 'category-search-bar',
+                        )}
                         onClick={() => setShowCategory(!showCategory)}
                     >
-                        {checked.length > 0 ? (
+                        {className ? (
+                            <>
+                                <div className={cx('category-sb-item')}>
+                                    <div className={cx('title-wrapper')}>
+                                        <span className={cx('title')}>
+                                            Phân loại
+                                        </span>
+                                        <span>
+                                            <FontAwesomeIcon
+                                                className={cx('arrow-down')}
+                                                icon={faChevronDown}
+                                            />
+                                        </span>
+                                    </div>
+
+                                    <p className={cx('sort-value')}>
+                                        {' '}
+                                        {crCategory
+                                            ? checked[0].category_name
+                                            : 'Tất cả'}
+                                    </p>
+                                </div>
+                            </>
+                        ) : crCategory && checked.length > 0 ? (
                             <>
                                 <span className={cx('icon-left')}>
-                                    {checked[checked.length - 1].icon}
+                                    <AiOutlineHome />
                                 </span>
                                 <span className={cx('text-ctgr')}>
                                     {' '}
-                                    {checked[checked.length - 1].text}
+                                    {crCategory && checked[0].category_name}
                                 </span>
                                 <span className={cx('icon-right')}>
                                     <MdKeyboardArrowDown />

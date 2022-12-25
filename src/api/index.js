@@ -118,7 +118,193 @@ export const getAllPost = async () => {
 
 export const getPostOfUser = async (id) => {
     try {
-        const res = await API.get('/post', id);
+        const res = await API.get(`/post/${id}`);
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const updateUser = async (id, data) => {
+    try {
+        const res = await API.post(`/user/update/${id}`, data, {
+            headers: {
+                // Overwrite Axios's automatically set Content-Type
+                'Content-Type': 'application/json',
+            },
+        });
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const updateUserFormData = async (id, formData) => {
+    try {
+        const res = await API.post(`/user/update/${id}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const updateUserSavePost = async (id, data) => {
+    try {
+        const res = await API.post(`user/update-save-post/${id}`, data, {
+            headers: {
+                // Overwrite Axios's automatically set Content-Type
+                'Content-Type': 'application/json',
+            },
+        });
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+export const deleteSavePost = async (id, data) => {
+    try {
+        const res = await API.post(`user/deleted-save-post/${id}`, data, {
+            headers: {
+                // Overwrite Axios's automatically set Content-Type
+                'Content-Type': 'application/json',
+            },
+        });
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const deletedUser = async (id) => {
+    try {
+        const res = await API.post(`/user/deleted/${id}`);
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const checkExpiredPost = async (id) => {
+    try {
+        const res = await API.put(`/post/check/${id}`);
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const sendMail = async (id) => {
+    try {
+        const res = await API.post(`/auth/send-mail/${id}`);
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const verifyEmail = async (id, otp) => {
+    try {
+        const res = await API.post(`/auth/verify/${id}`, otp, {
+            headers: {
+                // Overwrite Axios's automatically set Content-Type
+                'Content-Type': 'application/json',
+            },
+        });
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getUser = async (id) => {
+    try {
+        const res = await API.get(`/user/${id}`);
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const SearchFilterPost = async (query) => {
+    console.log(query);
+    try {
+        const res = await API.post(`/post/search?${query}`);
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getPostListOfUser = async (query) => {
+    try {
+        const res = await API.post(`/post/list?${query}`);
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getConvOfUser = async (id) => {
+    try {
+        const res = await API.get(`/conversation/${id}`);
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getMessages = async (id) => {
+    try {
+        const res = await API.get(`/message/${id}`);
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const addMessage = async (data) => {
+    try {
+        const res = await API.post(`/message`, data);
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const updatePassword = async (id, data) => {
+    try {
+        const res = await API.post(`/auth/${id}`, data);
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+// export const updateSeen = async (id) => {
+//     try {
+//         const res = await API.post(`/message/update/${id}`);
+//         return res.data;
+//     } catch (error) {
+//         return error;
+//     }
+// };
+
+export const createConversation = async (data) => {
+    try {
+        const res = await API.post('/conversation', data);
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getUserByEmail = async (email) => {
+    try {
+        const res = await API.get(`/user/email/${email}`);
         return res.data;
     } catch (error) {
         return error;

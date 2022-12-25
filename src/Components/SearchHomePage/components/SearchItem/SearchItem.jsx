@@ -1,32 +1,42 @@
 import PropTypes from 'prop-types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames/bind';
 import styles from './SearchItem.module.scss';
-import Image from '~/components/Image';
-import { AiOutlineHome, AiOutlineSearch } from 'react-icons/ai';
 
+import { AiOutlineHome } from 'react-icons/ai';
+import config from '~/config';
+import { useDispatch } from 'react-redux';
+import { currentPost } from '~/redux/slice/postSlice';
 const cx = classNames.bind(styles);
 
-function SearchItem({ data, value }) {
+function SearchItem({ data, className }) {
+    console.log(className);
+    const dispatch = useDispatch();
+    const handleOnClick = () => {
+        dispatch(currentPost(data));
+    };
+    console.log(data);
     return (
         <div>
-            <Link to={`/@${data.nickname}`} className={cx('wrapper')}>
-                <div className={cx('info-container')}>
-                    <AiOutlineHome className={cx('icon')} />
-
-                    <div className={cx('info')}>
-                        <h4 className={cx('title')}>
-                            {data.full_name}
-                            {data.tick && (
-                                <FontAwesomeIcon
-                                    icon={faCheckCircle}
-                                    className={cx('icon')}
-                                />
-                            )}
-                        </h4>
-                        <span className={cx('address')}>{data.nickname}</span>
+            <Link
+                to={config.routes.detailPage}
+                onClick={handleOnClick}
+                className={cx('wrapper')}
+            >
+                <div
+                    className={cx(
+                        'info-container',
+                        className && 'search-bar-container',
+                    )}
+                >
+                    <div>
+                        <AiOutlineHome className={cx('icon')} />
+                    </div>
+                    <div className={cx('info', className && 'search-bar-info')}>
+                        <h4 className={cx('title')}>{data.title}</h4>
+                        <span className={cx('address')}>
+                            {data.ward}, {data.district}, {data?.province}{' '}
+                        </span>
                     </div>
                 </div>
             </Link>

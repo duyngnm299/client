@@ -3,10 +3,19 @@ import classNames from 'classnames/bind';
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
 import styles from './ImageSlider.module.scss';
 import { useEffect } from 'react';
+import images from '~/assets/images';
 
 const cx = classNames.bind(styles);
 const delay = 3000;
-const ImageSlider = ({ slides }) => {
+const HOST_NAME = process.env.REACT_APP_HOST_NAME;
+const ImageSlider = ({
+    slides,
+    className,
+    imgBottom,
+    searchResult,
+    showPost,
+    detailPostOfUser,
+}) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const timeoutRef = useRef(null);
 
@@ -15,7 +24,6 @@ const ImageSlider = ({ slides }) => {
             clearTimeout(timeoutRef.current);
         }
     }
-
     useEffect(() => {
         resetTimeout();
         timeoutRef.current = setTimeout(
@@ -45,34 +53,111 @@ const ImageSlider = ({ slides }) => {
     const goToSlide = (slideIndex) => {
         setCurrentIndex(slideIndex);
     };
+
+    let stringURLImg = slides[currentIndex]?.imagePath
+        ? slides[currentIndex]?.imagePath.replace('\\', '/')
+        : '';
+
     const slideStylesWidthBackground = {
-        backgroundImage: `url(${slides[currentIndex].url})`,
+        backgroundImage: slides[currentIndex]
+            ? slides[currentIndex]?.imagePath
+                ? `url(${HOST_NAME}${stringURLImg})`
+                : `url(${slides[currentIndex].url})`
+            : images.slider1,
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
     };
 
     return (
-        <div className={cx('slider-wrapper')}>
-            <div className="arrow-container">
-                <div onClick={goToPrevious} className={cx('left-arrow')}>
+        <div
+            className={cx(
+                'slider-wrapper',
+                className,
+                detailPostOfUser && 'detail-post-user',
+            )}
+        >
+            <div
+                className={cx(
+                    'arrow-container',
+                    searchResult && 'hide-arrow',
+                    showPost && 'hide-arrow',
+                )}
+            >
+                <div
+                    onClick={() => {
+                        goToPrevious();
+                    }}
+                    className={cx(
+                        'left-arrow',
+                        imgBottom && 'arrow',
+                        detailPostOfUser && 'arrow',
+                    )}
+                >
                     <MdKeyboardArrowLeft />
                 </div>
-                <div onClick={goToNext} className={cx('right-arrow')}>
+                <div
+                    onClick={() => {
+                        goToNext();
+                    }}
+                    className={cx(
+                        'right-arrow',
+                        imgBottom && 'arrow',
+                        detailPostOfUser && 'arrow',
+                    )}
+                >
                     <MdKeyboardArrowRight />
                 </div>
             </div>
             <div
                 style={slideStylesWidthBackground}
-                className={cx('slider-show')}
+                className={cx(
+                    'slider-show',
+                    imgBottom && 'sls',
+                    searchResult && 'srs',
+                    showPost && 'sp',
+                )}
             ></div>
-            <div className={cx('dots-container')}>
-                {slides.map((slide, slideIndex) => (
-                    <div
-                        className={cx('dot')}
-                        key={slideIndex}
-                        onClick={() => goToSlide(slideIndex)}
-                    >
-                        ●
-                    </div>
-                ))}
+            <div
+                className={cx(
+                    'dots-container',
+                    imgBottom && 'img-bottom-container',
+                    detailPostOfUser && 'hide-arrow',
+                )}
+            >
+                {slides.map((slide, slideIndex) =>
+                    imgBottom ? (
+                        <div
+                            key={slideIndex}
+                            className={cx('img-bottom')}
+                            onClick={() => goToSlide(slideIndex)}
+                        >
+                            <img
+                                src={
+                                    slide?.imagePath
+                                        ? HOST_NAME + slide?.imagePath
+                                        : slide.url
+                                }
+                                alt=""
+                                className={cx(
+                                    'img-item',
+                                    currentIndex === slideIndex && 'img-active',
+                                )}
+                            />
+                        </div>
+                    ) : (
+                        <div
+                            className={cx(
+                                'dot',
+                                searchResult && 'hide-arrow',
+                                showPost && 'hide-arrow',
+                            )}
+                            key={slideIndex}
+                            onClick={() => goToSlide(slideIndex)}
+                        >
+                            ●
+                        </div>
+                    ),
+                )}
             </div>
         </div>
     );

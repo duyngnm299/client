@@ -34,11 +34,11 @@ const Image = forwardRef(
     },
 );
 
-Image.propTypes = {
-    src: PropTypes.string,
-    alt: PropTypes.string,
-    className: PropTypes.string,
-    fallBack: PropTypes.string,
-};
+// Image.propTypes = {
+//     src: PropTypes.string,
+//     alt: PropTypes.string,
+//     className: PropTypes.string,
+//     fallBack: PropTypes.string,
+// };
 
 export default Image;

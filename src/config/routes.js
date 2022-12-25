@@ -14,6 +14,11 @@ const routes = {
     postlist: '/quan-ly-bai-dang/danh-sach-tin-dang',
     login: '/dang-nhap',
     register: '/dang-ky',
+    detailPage: '/chi-tiet-bai-dang',
+    searchResult: '/ket-qua-tim-kiem',
+    message: '/tat-ca-tin-nhan',
+    postListOfUser: '/tat-ca-tin-dang-ca-nhan',
+    forgotPassword: '/quen-mat-khau',
 };
 
 export default routes;

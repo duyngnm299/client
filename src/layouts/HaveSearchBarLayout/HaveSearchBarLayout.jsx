@@ -4,7 +4,7 @@ import Header from '~/layouts/components/Header';
 import styles from './HaveSearchBarLayout.module.scss';
 import SearchBar from '../components/SearchBar';
 const cx = classNames.bind(styles);
-function DefaultLayout({ children }) {
+function HaveSearchBarLayout({ children }) {
     return (
         <div className={cx('wrapper')}>
             <Header />
@@ -18,8 +18,8 @@ function DefaultLayout({ children }) {
     );
 }
 
-DefaultLayout.propTypes = {
+HaveSearchBarLayout.propTypes = {
     children: PropTypes.node.isRequired,
 };
 
-export default DefaultLayout;
+export default HaveSearchBarLayout;

@@ -2,7 +2,11 @@
 .saved-list {
     width: 400px;
     .saved-item {
-        margin-left: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 400px;
+        margin: 0;
         font-family: var(--font-family);
         font-weight: 500;
     }
@@ -18,6 +22,9 @@
     border-bottom: 1px solid #f2f2f2;
 }
 .saved-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow-y: auto;
 }
 
@@ -37,4 +44,23 @@
     .text:hover {
         opacity: 0.8;
     }
+}
+.have-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    overflow-y: auto;
+}
+.empty-saved {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #f2f2f2;
+    height: 100px;
+}
+
+.empty-image {
+    width: 177px;
+    height: 174px;
 }

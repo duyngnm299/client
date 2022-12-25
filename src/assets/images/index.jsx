@@ -1,6 +1,6 @@
 const images = {
     logo: require('~/assets/images/logo.svg').default,
-    defaultAvt: require('~/assets/images/defaultAvt.png'),
+    defaultAvt: require('~/assets/images/user.png'),
     emptySaved: require('~/assets/images/empty-state.svg').default,
     caretDown: require('~/assets/images/caretdown.svg').default,
     emptyPost: require('~/assets/images/empty-post.svg').default,

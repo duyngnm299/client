@@ -6,25 +6,56 @@ import { TbListDetails } from 'react-icons/tb';
 import { BiPencil } from 'react-icons/bi';
 import { MdMoreHoriz } from 'react-icons/md';
 import { useSelector } from 'react-redux';
-import { getPostOfUser } from '~/api';
+import { getPostOfUser, checkExpiredPost } from '~/api';
+import DetailPostOfUser from './DetailPostOfUser';
 const cx = classNames.bind(styles);
 
-const item = [
-    'Tất cả',
-    'Hết hạn',
-    'Sắp hết hạn',
-    'Đang hiển thị',
-    'Chờ hiển thị',
-];
-const HOST_NAME = 'http://localhost:5000/';
+const item = ['Tất cả', 'Hết hạn', 'Đang hiển thị', 'Chờ hiển thị'];
+const HOST_NAME = process.env.REACT_APP_HOST_NAME;
 function NavbarPostList() {
     const [indexId, setIndexId] = useState(0);
     const [postList, setPostList] = useState([]);
+    const [currentPost, setCurrentPost] = useState([]);
+    const [showDetailPost, setShowDetailPost] = useState(false);
     const currentUser = useSelector((state) => state.auth.login?.currentUser);
+    const modal = useSelector((state) => state.post.modal?.show);
+    console.log(modal);
     const id = currentUser?.user?._id;
+    const date = new Date();
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
     useEffect(() => {
         getPostOfUser(id).then((res) => setPostList(res.posts));
     }, []);
+
+    useEffect(() => {
+        setShowDetailPost(false);
+    }, [modal]);
+
+    const checkExpiredDate = (endDate) => {
+        const arr = endDate.split('/');
+        const d = parseInt(arr[0]);
+        const m = parseInt(arr[1]);
+        const y = parseInt(arr[2]);
+        console.log(day - d);
+        if (year === y) {
+            if (month === m) {
+                if (day - d > 0) {
+                    return true;
+                }
+                if (day - d <= 0) {
+                    return false;
+                }
+            }
+            if (month > m) {
+                return true;
+            }
+        }
+        if (year < y) {
+            return true;
+        }
+    };
     const handleCategory = (name) => {
         switch (name) {
             case 'Phòng trọ':
@@ -49,10 +80,10 @@ function NavbarPostList() {
                 return 'Chờ duyệt';
             case 'approved':
                 return 'Đã duyệt';
-
             case 'deleted':
                 return 'Đã xóa';
-
+            case 'expired':
+                return 'Đã hết hạn';
             default:
                 break;
         }
@@ -64,20 +95,33 @@ function NavbarPostList() {
                 return;
             case 1:
                 setPostList([]);
+                getPostOfUser(id).then((res) => {
+                    res.posts.map((item) => {
+                        let check = checkExpiredDate(item.endDate);
+                        if (check) {
+                            checkExpiredPost(item._id).then((res) => {
+                                setPostList((prev) => [
+                                    ...prev,
+                                    res?.postExpired,
+                                ]);
+                            });
+                        }
+                    });
+                });
                 return;
             case 2:
-                setPostList([]);
+                getPostOfUser(id).then((res) =>
+                    setPostList(
+                        res.posts.filter((item) => item.status === 'approved'),
+                    ),
+                );
                 return;
             case 3:
-                setPostList([]);
-                return;
-            case 4:
                 getPostOfUser(id).then((res) =>
-                    setPostList((prevState) =>
-                        res.posts.filter((item) => [
-                            ...prevState,
-                            item.postType === 'waiting for approva',
-                        ]),
+                    setPostList(
+                        res.posts.filter(
+                            (item) => item.status === 'waiting for approva',
+                        ),
                     ),
                 );
                 return;
@@ -85,11 +129,14 @@ function NavbarPostList() {
                 break;
         }
     };
-
+    const handleDetailsPost = (item) => {
+        setShowDetailPost(true);
+        setCurrentPost(item);
+    };
     return (
         <div className={cx('wrapper')}>
             <div className={cx('navbar')}>
-                {item.map((item, index) => (
+                {item?.map((item, index) => (
                     <div
                         key={index}
                         className={cx(
@@ -103,12 +150,12 @@ function NavbarPostList() {
                     >
                         <p className={cx('title')}>
                             {item} (
-                            {(indexId === index && postList.length) || 0})
+                            {(indexId === index && postList?.length) || 0})
                         </p>
                     </div>
                 ))}
             </div>
-            {postList.length === 0 ? (
+            {postList?.length === 0 ? (
                 <div className={cx('post-list-container')}>
                     <div className={cx('post-list')}>
                         <img src={images.emptyPost} alt="" />
@@ -122,11 +169,6 @@ function NavbarPostList() {
                 </div>
             ) : (
                 <div className={cx('post-list-container')}>
-                    {/* <div className={cx('post-list')}>
-                    <img src={images.emptyPost} alt="" />
-                    <span className={cx('no-post')}>Không có bài đăng nào</span>
-                    <button className={cx('btn-new-post')}>Đăng tin mới</button>
-                </div> */}
                     <div className={cx('select-all')}>
                         <input
                             id="cb"
@@ -140,11 +182,14 @@ function NavbarPostList() {
 
                     {postList?.map((item, index) => (
                         <div className={cx('post-item-wrapper')} key={index}>
+                            {showDetailPost && (
+                                <DetailPostOfUser item={currentPost} />
+                            )}
                             <div className={cx('post-item')}>
                                 <div className={cx('top')}>
                                     <div className={cx('image')}>
                                         <img
-                                            src={`${HOST_NAME}${item.images[0].imagePath}`}
+                                            src={`${HOST_NAME}${item?.images[0]?.imagePath}`}
                                             alt="abc"
                                             className={cx('img')}
                                         />
@@ -158,8 +203,8 @@ function NavbarPostList() {
                                                 {handleCategory(
                                                     item?.category_name,
                                                 )}{' '}
-                                                • {item.district},{' '}
-                                                {item.province}
+                                                • {item?.district},{' '}
+                                                {item?.province}
                                             </p>
                                         </div>
                                         <div className={cx('describe')}>
@@ -226,34 +271,49 @@ function NavbarPostList() {
                                         </label>
                                     </div>
                                     <div className={cx('right')}>
-                                        <div className={cx('button')}>
-                                            <TbListDetails
-                                                className={cx('icon')}
-                                            />
-                                            <span
-                                                className={cx('text-control')}
+                                        <>
+                                            <div
+                                                className={cx('button')}
+                                                onClick={() =>
+                                                    handleDetailsPost(item)
+                                                }
                                             >
-                                                Chi tiết
-                                            </span>
-                                        </div>
-                                        <div className={cx('button')}>
-                                            <BiPencil className={cx('icon')} />
-                                            <span
-                                                className={cx('text-control')}
-                                            >
-                                                Sửa tin
-                                            </span>
-                                        </div>
-                                        <div className={cx('button')}>
-                                            <MdMoreHoriz
-                                                className={cx('icon')}
-                                            />
-                                            <span
-                                                className={cx('text-control')}
-                                            >
-                                                Thao tác
-                                            </span>
-                                        </div>
+                                                <TbListDetails
+                                                    className={cx('icon')}
+                                                />
+                                                <span
+                                                    className={cx(
+                                                        'text-control',
+                                                    )}
+                                                >
+                                                    Chi tiết
+                                                </span>
+                                            </div>
+                                            <div className={cx('button')}>
+                                                <BiPencil
+                                                    className={cx('icon')}
+                                                />
+                                                <span
+                                                    className={cx(
+                                                        'text-control',
+                                                    )}
+                                                >
+                                                    Sửa tin
+                                                </span>
+                                            </div>
+                                            <div className={cx('button')}>
+                                                <MdMoreHoriz
+                                                    className={cx('icon')}
+                                                />
+                                                <span
+                                                    className={cx(
+                                                        'text-control',
+                                                    )}
+                                                >
+                                                    Thao tác
+                                                </span>
+                                            </div>
+                                        </>
                                     </div>
                                 </div>
                             </div>

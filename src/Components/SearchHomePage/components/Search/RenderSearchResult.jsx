@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 
 import SearchItem from '../SearchItem/SearchItem';
 
-function RenderSearchResult({ data, value }) {
-    return data.map((user) => <SearchItem key={user.id} data={user} />);
+function RenderSearchResult({ data, className }) {
+    return data?.map((item) => (
+        <SearchItem key={item._id} data={item} className={className} />
+    ));
 }
 
 RenderSearchResult.propTypes = {

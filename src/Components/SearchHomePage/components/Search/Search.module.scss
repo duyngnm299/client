@@ -3,6 +3,13 @@
     width: 705px;
 }
 
+.search-bar,
+.search-bar-result {
+    width: 412px;
+}
+.popper {
+    padding-bottom: 8px;
+}
 .search {
     height: 48px;
     padding-left: 16px;
@@ -27,6 +34,18 @@
     color: rgba(22, 24, 35, 0.5);
     font-weight: 500;
     padding: 8px 16px 4px 16px;
+}
+
+.no-result {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    span {
+        font-size: 1.8rem;
+        margin-top: 18px;
+        width: 100%;
+        text-align: center;
+    }
 }
 
 .clear,

@@ -101,3 +101,20 @@
     min-width: 140px;
     padding: 14px 16px;
 }
+
+.more-btn {
+    padding: 0 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.arrow-icon {
+    font-size: 20px;
+    margin-top: 4px;
+    margin-left: 0px !important;
+}
+
+.more-btn-result {
+    padding: 0 36px;
+}
