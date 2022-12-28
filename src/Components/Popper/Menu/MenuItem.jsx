@@ -39,10 +39,12 @@ const menuItem = [
     },
 ];
 function MenuItem() {
-    const currentUser = useSelector((state) => state.auth.login.currentUser);
-    const id = currentUser._id;
+    const currentUser = useSelector((state) => state.auth.login?.currentUser);
+    const id = currentUser?.user?._id;
+    console.log(currentUser);
     const accessToken = currentUser?.accessToken;
-
+    console.log(id);
+    console.log(accessToken);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     let axiosJWT = createAxios(currentUser, dispatch, logOutSuccess);

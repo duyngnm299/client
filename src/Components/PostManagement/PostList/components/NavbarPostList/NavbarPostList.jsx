@@ -4,31 +4,78 @@ import styles from './NavbarPostList.module.scss';
 import images from '~/assets/images';
 import { TbListDetails } from 'react-icons/tb';
 import { BiPencil } from 'react-icons/bi';
-import { MdMoreHoriz } from 'react-icons/md';
-import { useSelector } from 'react-redux';
-import { getPostOfUser, checkExpiredPost } from '~/api';
+import { MdDeleteOutline } from 'react-icons/md';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+    getPostOfUser,
+    checkExpiredPost,
+    updateUser,
+    deletedPost,
+    getAllPostOfUser,
+} from '~/api';
 import DetailPostOfUser from './DetailPostOfUser';
+import { editPost } from '~/redux/slice/postSlice';
+import { IoCloseOutline } from 'react-icons/io5';
+import { useNavigate } from 'react-router-dom';
+import { AiFillInfoCircle } from 'react-icons/ai';
+import Button from '~/components/Button';
+import { updatedUser } from '~/redux/slice/authSlice';
+import Swal from 'sweetalert2';
+import 'sweetalert2/src/sweetalert2.scss';
+import { currentPost } from '~/redux/slice/postSlice';
+import { currentMenu } from '~/redux/slice/menuSlice';
 const cx = classNames.bind(styles);
 
 const item = ['Tất cả', 'Hết hạn', 'Đang hiển thị', 'Chờ hiển thị'];
 const HOST_NAME = process.env.REACT_APP_HOST_NAME;
 function NavbarPostList() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const crPost = useSelector((state) => state.post.editPost?.currentPost);
+    const listPost = useSelector((state) => state.post.postList?.list);
+    console.log(listPost);
     const [indexId, setIndexId] = useState(0);
     const [postList, setPostList] = useState([]);
-    const [currentPost, setCurrentPost] = useState([]);
+    const [crrPost, setCurrentPost] = useState([]);
     const [showDetailPost, setShowDetailPost] = useState(false);
-    const currentUser = useSelector((state) => state.auth.login?.currentUser);
+    const [showModal, setShowModal] = useState(false);
+    const [dltPost, setDltPost] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
+    const [checkedAll, setCheckedAll] = useState(false);
+    const [showDeleteAll, setShowDeleteAll] = useState(false);
+
+    const [totalCost, setTotalCost] = useState(0);
+    const currentUser = useSelector(
+        (state) => state.auth.login?.currentUser?.user,
+    );
     const modal = useSelector((state) => state.post.modal?.show);
-    console.log(modal);
-    const id = currentUser?.user?._id;
+    const udtUser = useSelector(
+        (state) => state.auth.update?.currentUser?.user,
+    );
+    let balance = currentUser?.balance;
+    let updateBalance = udtUser?.balance;
+    const id = currentUser?._id;
     const date = new Date();
     const day = date.getDate();
     const month = date.getMonth() + 1;
     const year = date.getFullYear();
     useEffect(() => {
-        getPostOfUser(id).then((res) => setPostList(res.posts));
+        getAllPostOfUser(`createdBy=${id}`).then((res) =>
+            setPostList(res.post),
+        );
     }, []);
-
+    useEffect(() => {
+        listPost
+            ? setPostList(listPost)
+            : getAllPostOfUser(`createdBy=${id}`).then((res) =>
+                  setPostList(res.post),
+              );
+    }, [listPost]);
+    useEffect(() => {
+        getAllPostOfUser(`createdBy=${id}`).then((res) =>
+            setPostList(res.post),
+        );
+    }, [dltPost]);
     useEffect(() => {
         setShowDetailPost(false);
     }, [modal]);
@@ -53,8 +100,133 @@ function NavbarPostList() {
             }
         }
         if (year < y) {
-            return true;
+            return false;
         }
+    };
+
+    const handleShowPost = (index) => {
+        switch (index) {
+            case 0:
+                getAllPostOfUser(`createdBy=${id}`).then((res) =>
+                    setPostList(res.post),
+                );
+                return;
+            case 1:
+                getAllPostOfUser(`createdBy=${id}&status=expired`).then((res) =>
+                    setPostList(res.post),
+                );
+
+                return;
+            case 2:
+                getAllPostOfUser(`createdBy=${id}&status=approved`).then(
+                    (res) => setPostList(res.post),
+                );
+                return;
+            case 3:
+                getAllPostOfUser(
+                    `createdBy=${id}&status=waiting for approva`,
+                ).then((res) => setPostList(res.post));
+                return;
+            default:
+                break;
+        }
+    };
+    const handleDetailsPost = (item, e) => {
+        e.stopPropagation();
+        setShowDetailPost(true);
+        setCurrentPost(item);
+    };
+    const handleEditPost = (item, e) => {
+        e.stopPropagation();
+        dispatch(editPost(item));
+        navigate('/quan-ly-bai-dang/dang-tin');
+    };
+    const handleDeletePost = (e) => {
+        e.stopPropagation();
+        setShowModal(true);
+    };
+    const handleConfirmDeletePost = () => {
+        if (crrPost.status === 'waiting for approva') {
+            deletedPost(crrPost._id).then((res) => console.log(res));
+            let newBalance = 0;
+            newBalance = udtUser
+                ? updateBalance + crrPost.costPost
+                : balance + crrPost.costPost;
+            console.log(newBalance);
+            const data = { balance: newBalance };
+            updateUser(id, data).then((res) => {
+                console.log(res);
+                dispatch(updatedUser(res));
+                alert('Xóa tin thành công!', 'success', '');
+                setShowModal(false);
+            });
+            setDltPost(!dltPost);
+            return;
+        }
+        deletedPost(crrPost._id).then((res) => {
+            setDltPost(!dltPost);
+            console.log(res);
+        });
+    };
+    const handleOnClickPostItem = (item) => {
+        if (
+            item.status === 'expired' ||
+            item.status === 'waiting for approva'
+        ) {
+            setShowAlert(true);
+
+            const timerId = setTimeout(() => {
+                setShowAlert(false);
+            }, 2000);
+
+            return () => clearTimeout(timerId);
+        }
+        dispatch(currentPost(item));
+        navigate('/chi-tiet-bai-dang');
+    };
+
+    const handleDeleteAll = () => {
+        setShowDeleteAll(!showDeleteAll);
+    };
+    useEffect(() => {
+        let newBalance = 0;
+        newBalance = udtUser ? updateBalance + totalCost : balance + totalCost;
+        const data = { balance: newBalance };
+        totalCost &&
+            updateUser(currentUser._id, data).then((res) =>
+                dispatch(updatedUser(res)),
+            );
+    }, [totalCost]);
+    const handleConfirmDeleteAllPost = () => {
+        setShowDeleteAll(false);
+        postList.map(async (item) => {
+            if (item.status === 'waiting for approva') {
+                setTotalCost((prev) => prev + item.costPost);
+            }
+
+            await deletedPost(item._id);
+            setDltPost(!dltPost);
+            alert('Xóa tin thành công!', 'success', '');
+        });
+    };
+
+    const alert = (title, type, message) => {
+        Swal.fire({
+            title: `<h2 class="notify-title">${title}</h2>`,
+            icon: type,
+            html: `<p style="font-size: 1.4rem; margin: 0 0 20px 0">${message}</p>`,
+            confirmButtonText:
+                '<p style="font-size: 16px; padding: 10px;">Xác nhận</p>',
+            confirmButtonColor: type === 'success' ? '#a5dc86' : '#e03c31',
+            allowOutsideClick: false,
+            focusConfirm: false,
+            width: '500px',
+            padding: '30px 20px',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                type === 'success' && setShowModal(false);
+            }
+        });
     };
     const handleCategory = (name) => {
         switch (name) {
@@ -88,51 +260,7 @@ function NavbarPostList() {
                 break;
         }
     };
-    const handleShowPost = (index) => {
-        switch (index) {
-            case 0:
-                getPostOfUser(id).then((res) => setPostList(res.posts));
-                return;
-            case 1:
-                setPostList([]);
-                getPostOfUser(id).then((res) => {
-                    res.posts.map((item) => {
-                        let check = checkExpiredDate(item.endDate);
-                        if (check) {
-                            checkExpiredPost(item._id).then((res) => {
-                                setPostList((prev) => [
-                                    ...prev,
-                                    res?.postExpired,
-                                ]);
-                            });
-                        }
-                    });
-                });
-                return;
-            case 2:
-                getPostOfUser(id).then((res) =>
-                    setPostList(
-                        res.posts.filter((item) => item.status === 'approved'),
-                    ),
-                );
-                return;
-            case 3:
-                getPostOfUser(id).then((res) =>
-                    setPostList(
-                        res.posts.filter(
-                            (item) => item.status === 'waiting for approva',
-                        ),
-                    ),
-                );
-                return;
-            default:
-                break;
-        }
-    };
-    const handleDetailsPost = (item) => {
-        setShowDetailPost(true);
-        setCurrentPost(item);
-    };
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('navbar')}>
@@ -162,7 +290,13 @@ function NavbarPostList() {
                         <span className={cx('no-post')}>
                             Không có bài đăng nào
                         </span>
-                        <button className={cx('btn-new-post')}>
+                        <button
+                            className={cx('btn-new-post')}
+                            onClick={() => {
+                                dispatch(currentMenu('new_post'));
+                                navigate('/quan-ly-bai-dang/dang-tin');
+                            }}
+                        >
                             Đăng tin mới
                         </button>
                     </div>
@@ -174,18 +308,57 @@ function NavbarPostList() {
                             id="cb"
                             type="checkbox"
                             className={cx('checkbox')}
+                            checked={checkedAll}
+                            onChange={() => setCheckedAll(!checkedAll)}
+                            onClick={handleDeleteAll}
                         />
                         <label htmlFor="cb" className={cx('cb-text')}>
                             Chọn tất cả
                         </label>
                     </div>
+                    {showDeleteAll && (
+                        <div className={cx('delete-all')}>
+                            <div className={cx('left-delete')}>
+                                <input
+                                    className={cx('cb-delete')}
+                                    type="checkbox"
+                                    checked={checkedAll}
+                                    onClick={() => {
+                                        setCheckedAll(!checkedAll);
+                                        setShowDeleteAll(!showDeleteAll);
+                                    }}
+                                    onChange={() => {}}
+                                />
+                                <span className={cx('delete-text')}>
+                                    Hiện tại có {postList?.length} tin được chọn
+                                </span>
+                            </div>
 
+                            <button
+                                className={cx('delete-btn')}
+                                onClick={handleConfirmDeleteAllPost}
+                            >
+                                Xóa tất cả
+                            </button>
+                        </div>
+                    )}
+                    {showAlert && (
+                        <div className={cx('notify')}>
+                            <span className={cx('notify-text')}>
+                                Tin của bạn chưa được duyệt hoặc đã hết hạn!
+                            </span>
+                        </div>
+                    )}
                     {postList?.map((item, index) => (
                         <div className={cx('post-item-wrapper')} key={index}>
                             {showDetailPost && (
-                                <DetailPostOfUser item={currentPost} />
+                                <DetailPostOfUser item={crrPost} />
                             )}
-                            <div className={cx('post-item')}>
+
+                            <div
+                                className={cx('post-item')}
+                                onClick={() => handleOnClickPostItem(item)}
+                            >
                                 <div className={cx('top')}>
                                     <div className={cx('image')}>
                                         <img
@@ -262,6 +435,8 @@ function NavbarPostList() {
                                             type="checkbox"
                                             className={cx('checkbox')}
                                             id="cb2"
+                                            checked={checkedAll}
+                                            onChange={() => {}}
                                         />
                                         <label
                                             htmlFor="cb2"
@@ -274,8 +449,8 @@ function NavbarPostList() {
                                         <>
                                             <div
                                                 className={cx('button')}
-                                                onClick={() =>
-                                                    handleDetailsPost(item)
+                                                onClick={(e) =>
+                                                    handleDetailsPost(item, e)
                                                 }
                                             >
                                                 <TbListDetails
@@ -289,7 +464,12 @@ function NavbarPostList() {
                                                     Chi tiết
                                                 </span>
                                             </div>
-                                            <div className={cx('button')}>
+                                            <div
+                                                className={cx('button')}
+                                                onClick={(e) => {
+                                                    handleEditPost(item, e);
+                                                }}
+                                            >
                                                 <BiPencil
                                                     className={cx('icon')}
                                                 />
@@ -301,8 +481,14 @@ function NavbarPostList() {
                                                     Sửa tin
                                                 </span>
                                             </div>
-                                            <div className={cx('button')}>
-                                                <MdMoreHoriz
+                                            <div
+                                                className={cx('button')}
+                                                onClick={(e) => {
+                                                    setCurrentPost(item);
+                                                    handleDeletePost(e);
+                                                }}
+                                            >
+                                                <MdDeleteOutline
                                                     className={cx('icon')}
                                                 />
                                                 <span
@@ -310,7 +496,7 @@ function NavbarPostList() {
                                                         'text-control',
                                                     )}
                                                 >
-                                                    Thao tác
+                                                    Xóa tin
                                                 </span>
                                             </div>
                                         </>
@@ -319,6 +505,82 @@ function NavbarPostList() {
                             </div>
                         </div>
                     ))}
+                    {showModal && (
+                        <div
+                            className={cx('modal')}
+                            onClick={() => setShowModal(false)}
+                        >
+                            <div
+                                className={cx('modal-content')}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <div className={cx('header')}>
+                                    <h4 className={cx('title-header')}>
+                                        Xóa tin
+                                    </h4>
+                                    <IoCloseOutline
+                                        className={cx('close')}
+                                        onClick={() => setShowModal(false)}
+                                    />
+                                </div>
+                                <div className={cx('content')}>
+                                    <div className={cx('top-content')}>
+                                        <div className={cx('post-code')}>
+                                            <span className={cx('text')}>
+                                                Mã tin
+                                            </span>
+                                            <span className={cx('code')}>
+                                                {crrPost?.postCode}
+                                            </span>
+                                        </div>
+                                        <div className={cx('refund')}>
+                                            <span className={cx('text')}>
+                                                Hoàn tiền
+                                            </span>
+                                            <span className={cx('money')}>
+                                                {crrPost?.status ===
+                                                'waiting for approva'
+                                                    ? crrPost?.costPost
+                                                    : 0}{' '}
+                                                <span className={cx('unit')}>
+                                                    {' '}
+                                                    VND
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className={cx('bottom-content')}>
+                                        <AiFillInfoCircle
+                                            className={cx('icon-warning')}
+                                        />
+                                        <span className={cx('text-bold')}>
+                                            Lưu ý:{' '}
+                                        </span>
+                                        <span className={cx('text-normal')}>
+                                            Tin đăng sau khi xóa sẽ không thể
+                                            khôi phục
+                                        </span>
+                                    </div>
+                                    <div className={cx('action')}>
+                                        <Button
+                                            text
+                                            className={cx('cancel')}
+                                            onClick={() => setShowModal(false)}
+                                        >
+                                            Hủy
+                                        </Button>
+                                        <Button
+                                            primary
+                                            className={cx('submit')}
+                                            onClick={handleConfirmDeletePost}
+                                        >
+                                            Xóa tin
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
         </div>

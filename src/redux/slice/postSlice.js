@@ -16,6 +16,12 @@ const postSlice = createSlice({
         modal: {
             show: false,
         },
+        editPost: {
+            currentPost: null,
+        },
+        postList: {
+            list: null,
+        },
     },
     reducers: {
         currentPost: (state, action) => {
@@ -31,9 +37,22 @@ const postSlice = createSlice({
         changeModal: (state) => {
             state.modal.show = !state.modal.show;
         },
+        editPost: (state, action) => {
+            console.log(action.payload);
+            state.editPost.currentPost = action.payload;
+        },
+        postListOfUser: (state, action) => {
+            state.postList.list = action.payload ? action.payload : null;
+        },
     },
 });
 
-export const { currentPost, savedPostItemChange, removedItem, changeModal } =
-    postSlice.actions;
+export const {
+    currentPost,
+    savedPostItemChange,
+    removedItem,
+    changeModal,
+    editPost,
+    postListOfUser,
+} = postSlice.actions;
 export default postSlice.reducer;

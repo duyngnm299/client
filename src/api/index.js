@@ -75,7 +75,7 @@ export const signUpGoogle = async (accessToken) => {
 };
 
 export const logOut = async (dispatch, id, navigate, token, axiosJWT) => {
-    dispatch(logOutStart);
+    dispatch(logOutStart());
     try {
         await axiosJWT.post('http://localhost:5000/auth/logout', id, {
             headers: {
@@ -305,6 +305,41 @@ export const createConversation = async (data) => {
 export const getUserByEmail = async (email) => {
     try {
         const res = await API.get(`/user/email/${email}`);
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const updatePost = async (id, data) => {
+    try {
+        const res = await API.post(`/post/update/${id}`, data);
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const deletedPost = async (id) => {
+    try {
+        const res = await API.post(`/post/deleted/${id}`);
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+export const getAllPostOfUser = async (query) => {
+    try {
+        const res = await API.post(`/post/allPostOfUser?${query}`);
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const updateExpiredPost = async (id, data) => {
+    try {
+        const res = await API.post(`/post/update-expired/${id}`, data);
         return res.data;
     } catch (error) {
         return error;

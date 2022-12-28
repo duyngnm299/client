@@ -27,7 +27,6 @@ function MessageBox() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentUser]);
     useEffect(() => {
-        console.log('here');
         if (newMsg?.receiver === currentUser._id) {
             setMessage(true);
         }

@@ -114,7 +114,7 @@ function Result() {
                 <Sort />
             </div>
             <div className={cx('result')}>
-                {listResult.length > 0 ? (
+                {listResult && listResult.length > 0 ? (
                     listResult?.map((item, index) => (
                         <Link
                             key={index}

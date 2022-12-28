@@ -14,17 +14,20 @@ import { useEffect } from 'react';
 import { getUser } from '~/api';
 import { BiPhoneCall } from 'react-icons/bi';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import images from '~/assets/images';
-import { changeModal } from '~/redux/slice/postSlice';
+import { changeModal, editPost } from '~/redux/slice/postSlice';
 const cx = classNames.bind(styles);
 const HOST_NAME = process.env.REACT_APP_HOST_NAME;
 
 function DetailPostOfUser({ item }) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [user, setUser] = useState([]);
     useEffect(() => {
         getUser(item.createdBy).then((res) => setUser(res.user));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     const formatCash = (number) => {
         return number
@@ -50,6 +53,11 @@ function DetailPostOfUser({ item }) {
                 : '';
         return `${part1}${part2}${part3}`;
     }
+    const handleEditPost = () => {
+        dispatch(editPost(item));
+        navigate('/quan-ly-bai-dang/dang-tin');
+    };
+
     return (
         <div className={cx('wrapper')} onClick={() => dispatch(changeModal())}>
             <div className={cx('content')} onClick={(e) => e.stopPropagation()}>
@@ -69,7 +77,7 @@ function DetailPostOfUser({ item }) {
                         <span className={cx('title-price')}>Diện tích</span>
                         <span className={cx('text')}>{`${item?.area} m²`}</span>
                     </div>
-                    {des?.bedroom && (
+                    {des?.bedroom.length > 0 && des?.bedroom !== 0 && (
                         <div className={cx('price')}>
                             <span className={cx('title-price')}>Phòng ngủ</span>
                             <span
@@ -77,7 +85,7 @@ function DetailPostOfUser({ item }) {
                             >{`${des?.bedroom} PN`}</span>
                         </div>
                     )}
-                    {des?.restroom && (
+                    {des?.restroom?.length > 0 && des?.restroom !== 0 && (
                         <div className={cx('price')}>
                             <span className={cx('title-price')}>
                                 Phòng vệ sinh
@@ -87,7 +95,7 @@ function DetailPostOfUser({ item }) {
                             >{`${des?.restroom} phòng`}</span>
                         </div>
                     )}
-                    {des?.floor && (
+                    {des?.floor?.lenght > 0 && (
                         <div className={cx('price')}>
                             <span className={cx('title-price')}>Số tầng</span>
                             <span
@@ -281,10 +289,12 @@ function DetailPostOfUser({ item }) {
                     </div>
                     <div className={cx('edit-and-delete')}>
                         <div className={cx('edit')}>
-                            <button className={cx('edit-btn')}>Sửa tin</button>
-                        </div>
-                        <div className={cx('edit')}>
-                            <button className={cx('edit-btn')}>Xóa tin</button>
+                            <button
+                                className={cx('edit-btn')}
+                                onClick={handleEditPost}
+                            >
+                                Sửa tin
+                            </button>
                         </div>
                     </div>
                 </div>

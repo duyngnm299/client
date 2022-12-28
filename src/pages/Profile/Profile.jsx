@@ -161,28 +161,6 @@ function Profile() {
         }
     };
 
-    const handleClickSendMail = (e) => {
-        e.preventDefault();
-        sendMail(currentUser?._id).then((res) => console.log(res));
-    };
-
-    const handleClickVerify = () => {
-        if (verifyCode.length > 0) {
-            const data = JSON.stringify({ otp: verifyCode });
-            dispatch(updatedStart());
-            verifyEmail(currentUser?._id, data).then((res) => {
-                console.log(res.newUser);
-                dispatch(updatedUser(res.newUser));
-                if (res?.newUser?.isVerify) {
-                    setShowModal(false);
-                    alert('Xác thực email thành công', 'success', '');
-                    setShowVerify(true);
-                    return;
-                }
-                setShowAlert(true);
-            });
-        }
-    };
     const handleChangeImage = (e) => {
         setImage(e.target.files);
         // setImage(e.target.files);
@@ -213,23 +191,6 @@ function Profile() {
             phoneRef.current.focus();
             return;
         }
-        // const data = JSON.stringify({
-        //     fullName: fullName,
-        //     dateOfBirth: date.toLocaleDateString(),
-        //     province: provinceValue,
-        //     district: districtValue,
-        //     gender: gender,
-        //     ward: wardValue,
-        //     address: inputAddressValue.toString(),
-        //     phoneNumber: phoneNumber,
-        //     identityCard: identityCard,
-        //     zalo: zaloValue,
-        // });
-        // dispatch(updatedStart());
-        // updateUser(currentUser._id, data).then((res) => {
-        //     dispatch(updatedUser(res));
-        //     alert('Cập nhật thành công!', 'success', '');
-        // });
         const formData = new FormData();
         formData.append('fullName', fullName);
         formData.append('dateOfBirth', date.toLocaleDateString());
@@ -978,37 +939,12 @@ function Profile() {
                                         readOnly
                                     />
                                 </div>
-                                {showVerify ? (
-                                    <div className={cx('verify-icon')}>
-                                        <MdVerified className={cx('icon')} />
-                                    </div>
-                                ) : (
-                                    <div className={cx('verify')}>
-                                        <button
-                                            type="button"
-                                            className={cx('btn-verify')}
-                                            onClick={() => {
-                                                setShowModal(true);
-                                                handleClickSendMail();
-                                            }}
-                                        >
-                                            Xác thực email
-                                        </button>
-                                    </div>
-                                )}
+
+                                <div className={cx('verify-icon')}>
+                                    <MdVerified className={cx('icon')} />
+                                </div>
                             </div>
-                            {showNotify &&
-                                !udtUser?.isVerify &&
-                                !currentUser?.isVerify && (
-                                    <span
-                                        className={cx(
-                                            'validate',
-                                            'validate-fullname',
-                                        )}
-                                    >
-                                        Bạn cần xác thực Email
-                                    </span>
-                                )}
+
                             <div className={cx('date-of-birth')}>
                                 <div className={cx('left')}>
                                     <span className={cx('left-text')}>
@@ -1055,94 +991,6 @@ function Profile() {
                                 onClick={handleSubmit}
                             />
                         </div>
-                        {/* Modal verify email */}
-                        {showModal && (
-                            <div
-                                className={cx('modal')}
-                                onClick={() => setShowModal(false)}
-                            >
-                                <div
-                                    className={cx('modal-content')}
-                                    onClick={(e) => e.stopPropagation()}
-                                >
-                                    <div className={cx('modal-header')}>
-                                        <p className={cx('title-header')}>
-                                            Xác thực email
-                                        </p>
-                                        <IoCloseOutline
-                                            className={cx('close')}
-                                            onClick={() => setShowModal(false)}
-                                        />
-                                    </div>
-                                    <div
-                                        className={cx(
-                                            'modal-content-container',
-                                        )}
-                                    >
-                                        <div className={cx('ct-container')}>
-                                            <div className={cx('sub-title')}>
-                                                <p
-                                                    className={cx(
-                                                        'sub-title-text',
-                                                    )}
-                                                >
-                                                    Mã xác thực đã được gửi vào
-                                                    email của bạn. Vui lòng kiểm
-                                                    tra email và nhập mã xác
-                                                    thực vào ô bên dưới!
-                                                </p>
-                                            </div>
-                                            <div
-                                                className={cx(
-                                                    'verify-container',
-                                                )}
-                                            >
-                                                <label
-                                                    htmlFor="ip"
-                                                    className={cx(
-                                                        'label-verify',
-                                                    )}
-                                                >
-                                                    Nhập mã xác thực
-                                                </label>
-                                                <input
-                                                    value={verifyCode}
-                                                    id="ip"
-                                                    type="text"
-                                                    className={cx(
-                                                        'input-verify',
-                                                    )}
-                                                    placeholder="Nhập mã xác thực"
-                                                    onChange={(e) =>
-                                                        setVerifyCode(
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                />
-                                                {showAlert && (
-                                                    <span
-                                                        className={cx(
-                                                            'validate',
-                                                        )}
-                                                    >
-                                                        Mã xác thực chưa chính
-                                                        xác.
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className={cx('footer')}>
-                                        <button
-                                            className={cx('btn-verify-modal')}
-                                            onClick={handleClickVerify}
-                                        >
-                                            Xác thực Email
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
             </form>

@@ -15,21 +15,20 @@ function Contact() {
     const currentUser = useSelector(
         (state) => state.auth.login?.currentUser?.user,
     );
-    // const updateUser = useSelector(
-    //     (state) => state.auth.update?.currentUser?.user,
-    // );
+
     const crPost = useSelector(
         (state) => state.post?.post?.currentPost?.createdBy[0],
     );
-    console.log(crPost);
+
     const [showPhoneNumber, setShowPhoneNumber] = useState(false);
     const [listPostOfUser, setListPostOfUser] = useState([]);
     const [userPost, setUserpost] = useState('');
-    console.log(userPost);
+
     useEffect(() => {
         crPost && getUser(crPost).then((res) => setUserpost(res.user));
         crPost &&
             getPostOfUser(crPost).then((res) => setListPostOfUser(res.posts));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     function formatNumber(entry = '', hide = false) {
         const match = entry
@@ -47,15 +46,15 @@ function Contact() {
         return `${part1}${part2}${part3}`;
     }
     const handleSendMessage = () => {
-        if (crPost === currentUser._id) {
+        if (crPost === currentUser?._id) {
             return;
         }
-        const data = { senderId: currentUser._id, receiverId: crPost };
-        createConversation(data).then((res) => {
-            dispatch(currentConversation(res.savedConversation));
-            navigate('/tat-ca-tin-nhan');
-        });
-        // Đã làm đến đây
+        const data = { senderId: currentUser?._id, receiverId: crPost };
+        currentUser &&
+            createConversation(data).then((res) => {
+                dispatch(currentConversation(res.savedConversation));
+                navigate('/tat-ca-tin-nhan');
+            });
     };
     return (
         <div className={cx('wrapper')}>

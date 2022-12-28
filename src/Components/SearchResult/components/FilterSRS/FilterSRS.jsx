@@ -49,14 +49,14 @@ function FilterSRS() {
         setFilterByAreaIndex(-1);
         switch (index) {
             case 0:
-                dispatch(priceRange([0, 1000000]));
+                dispatch(priceRange([0, 999999]));
                 dispatch(areaRange(null));
                 SearchFilterPost(
                     `title=${searchValue ? searchValue : ''}&category_name=${
                         currentCategory ? currentCategory : ''
                     }&district=${
                         currentDistrict ? currentDistrict : ''
-                    }&price_gte=${0}&price_lte=${1000000}&${sort && sort}`,
+                    }&price_gte=${0}&price_lte=${999999}&${sort && sort}`,
                 ).then((res) => dispatch(filterResult(res)));
                 setFilterByPriceIndex(index);
                 return;
@@ -171,14 +171,14 @@ function FilterSRS() {
         setFilterByPriceIndex(-1);
         switch (index) {
             case 0:
-                dispatch(areaRange([0, 30]));
+                dispatch(areaRange([0, 29]));
                 dispatch(priceRange(null));
                 SearchFilterPost(
                     `title=${searchValue ? searchValue : ''}&category_name=${
                         currentCategory ? currentCategory : ''
                     }&district=${
                         currentDistrict ? currentDistrict : ''
-                    }&areaGte=${0}&areaLte=${30}&${sort && sort}`,
+                    }&areaGte=${0}&areaLte=${29}&${sort && sort}`,
                 ).then((res) => dispatch(filterResult(res)));
                 setFilterByAreaIndex(index);
                 return;
@@ -197,7 +197,7 @@ function FilterSRS() {
 
                 return;
             case 2:
-                dispatch(areaRange([50, 80]));
+                dispatch(areaRange([51, 80]));
                 dispatch(priceRange(null));
 
                 SearchFilterPost(
@@ -205,13 +205,13 @@ function FilterSRS() {
                         currentCategory ? currentCategory : ''
                     }&district=${
                         currentDistrict ? currentDistrict : ''
-                    }&areaGte=${50}&areaLte=${80}&${sort && sort}`,
+                    }&areaGte=${51}&areaLte=${80}&${sort && sort}`,
                 ).then((res) => dispatch(filterResult(res)));
                 setFilterByAreaIndex(index);
 
                 return;
             case 3:
-                dispatch(areaRange([80, 100]));
+                dispatch(areaRange([81, 100]));
                 dispatch(priceRange(null));
 
                 SearchFilterPost(
@@ -219,13 +219,13 @@ function FilterSRS() {
                         currentCategory ? currentCategory : ''
                     }&district=${
                         currentDistrict ? currentDistrict : ''
-                    }&areaGte=${80}&areaLte=${100}&${sort && sort}`,
+                    }&areaGte=${81}&areaLte=${100}&${sort && sort}`,
                 ).then((res) => dispatch(filterResult(res)));
                 setFilterByAreaIndex(index);
 
                 return;
             case 4:
-                dispatch(areaRange([100, 150]));
+                dispatch(areaRange([101, 150]));
                 dispatch(priceRange(null));
 
                 SearchFilterPost(
@@ -233,12 +233,12 @@ function FilterSRS() {
                         currentCategory ? currentCategory : ''
                     }&district=${
                         currentDistrict ? currentDistrict : ''
-                    }&areaGte=${100}&areaLte=${150}&${sort && sort}`,
+                    }&areaGte=${101}&areaLte=${150}&${sort && sort}`,
                 ).then((res) => dispatch(filterResult(res)));
                 setFilterByAreaIndex(index);
                 return;
             case 5:
-                dispatch(areaRange([150, 200]));
+                dispatch(areaRange([151, 200]));
                 dispatch(priceRange(null));
 
                 SearchFilterPost(
@@ -246,12 +246,12 @@ function FilterSRS() {
                         currentCategory ? currentCategory : ''
                     }&district=${
                         currentDistrict ? currentDistrict : ''
-                    }&areaGte=${150}&areaLte=${200}&${sort && sort}`,
+                    }&areaGte=${151}&areaLte=${200}&${sort && sort}`,
                 ).then((res) => dispatch(filterResult(res)));
                 setFilterByAreaIndex(index);
                 return;
             case 6:
-                dispatch(areaRange([200, 250]));
+                dispatch(areaRange([201, 250]));
                 dispatch(priceRange(null));
 
                 SearchFilterPost(
@@ -259,19 +259,19 @@ function FilterSRS() {
                         currentCategory ? currentCategory : ''
                     }&district=${
                         currentDistrict ? currentDistrict : ''
-                    }&areaGte=${200}&areaLte=${250}&${sort && sort}`,
+                    }&areaGte=${201}&areaLte=${250}&${sort && sort}`,
                 ).then((res) => dispatch(filterResult(res)));
                 setFilterByAreaIndex(index);
                 return;
             case 7:
-                dispatch(areaRange([250, 300]));
+                dispatch(areaRange([251, 300]));
                 dispatch(priceRange(null));
                 SearchFilterPost(
                     `title=${searchValue ? searchValue : ''}&category_name=${
                         currentCategory ? currentCategory : ''
                     }&district=${
                         currentDistrict ? currentDistrict : ''
-                    }&areaGte=${250}&areaLte=${300}&${sort && sort}`,
+                    }&areaGte=${251}&areaLte=${300}&${sort && sort}`,
                 ).then((res) => dispatch(filterResult(res)));
                 setFilterByAreaIndex(index);
                 return;

@@ -19,7 +19,7 @@ import classNames from 'classnames/bind';
 import styles from './Mapbox.module.scss';
 
 const cx = classNames.bind(styles);
-function Mapbox({ searchAddress, className, detailPostOfUser }) {
+function Mapbox({ searchAddress, className, detailPostOfUser, editPost }) {
     const [currentPosition, setCurrentPosition] = useState({});
     const [viewPort, setViewPort] = useState({});
     const [directions, setDirections] = useState(null);
@@ -127,6 +127,7 @@ function Mapbox({ searchAddress, className, detailPostOfUser }) {
                 'map',
                 className,
                 detailPostOfUser && 'mapbox-details-post-user',
+                editPost && 'edit-post',
             )}
         >
             {viewPort.latitude && viewPort.longitude && (

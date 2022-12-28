@@ -3,11 +3,15 @@ import classNames from 'classnames/bind';
 import styles from './SavedItem.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
-import images from '~/assets/images';
+import { useNavigate } from 'react-router-dom';
 import { deleteSavePost } from '~/api';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { removedItem, savedPostItemChange } from '~/redux/slice/postSlice';
+import {
+    currentPost,
+    removedItem,
+    savedPostItemChange,
+} from '~/redux/slice/postSlice';
 const cx = classNames.bind(styles);
 const HOST_NAME = process.env.REACT_APP_HOST_NAME;
 function SavedItem({ data }) {
@@ -16,7 +20,7 @@ function SavedItem({ data }) {
     );
 
     const dispatch = useDispatch();
-
+    const navigate = useNavigate();
     const handleDeleteSavePost = () => {
         const postId = JSON.stringify({ postId: data?._id });
         deleteSavePost(currentUser._id, postId).then((res) => {
@@ -25,10 +29,15 @@ function SavedItem({ data }) {
             console.log(res);
         });
     };
+
+    const handleDetailPost = () => {
+        dispatch(currentPost(data));
+        navigate('/chi-tiet-bai-dang');
+    };
     return (
         <div>
             {data.images && (
-                <div className={cx('saved-item')}>
+                <div className={cx('saved-item')} onClick={handleDetailPost}>
                     <FontAwesomeIcon
                         icon={faXmark}
                         className={cx('deleted-icon')}

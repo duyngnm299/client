@@ -6,11 +6,9 @@ import DefaultLayout from '~/layouts';
 import { useRef, useEffect } from 'react';
 import io from 'socket.io-client';
 import { useSelector, useDispatch } from 'react-redux';
-import { showNotify } from './redux/slice/messageSlice';
 
 const HOST_NAME = process.env.REACT_APP_HOST_NAME;
 function App() {
-    const dispatch = useDispatch();
     const socket = useRef();
 
     const currentUser = useSelector(

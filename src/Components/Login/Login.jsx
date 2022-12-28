@@ -21,8 +21,8 @@ const cx = classNames.bind(styles);
 function Login() {
     // Login
     const currentUser = useSelector((state) => state.auth.login.currentUser);
-    const googleUsername = currentUser?.user?.fullName;
-    console.log(googleUsername);
+    const googleUsername = currentUser?.fullName;
+
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState(false);
@@ -70,12 +70,13 @@ function Login() {
             setMessage(true);
             return;
         }
-        dispatch(loginStart);
+        dispatch(loginStart());
         try {
             signIn(user)
                 .then((res) => {
                     setShowErrorNotify(false);
                     setShowSuccessNotify(true);
+                    console.log(res.data);
                     dispatch(loginSuccess(res.data));
                 })
                 .catch((error) => {

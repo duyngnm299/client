@@ -1,19 +1,35 @@
-.wrapper {
-    width: 220px;
-    position: relative;
+.address-list,
+.address-body {
+    width: 210px;
+    max-width: 210px;
 }
-
+.address-popper {
+    padding-bottom: 8px;
+}
 .search-by-address {
-    // position: relative;
     display: flex;
     align-items: center;
-    width: 100%;
+    justify-content: space-between;
+    width: 210px;
+    max-width: 210px;
     border: 1px solid #ccc;
     border-radius: 6px;
     height: 32px;
     max-height: 32px;
-    padding: 12px;
     cursor: pointer;
+    &:hover,
+    &:focus {
+        border: 1px solid #000;
+    }
+}
+.active {
+    border: 1px solid #000;
+}
+.left {
+    display: flex;
+    align-items: center;
+    width: 180px;
+    max-width: 180px;
 }
 
 .icon-left {
@@ -21,10 +37,11 @@
     line-height: 2rem;
     color: rgb(44, 44, 44);
     margin-right: 8px;
-    margin-left: -2px;
+    margin-left: 10px;
 }
 
 .text {
+    max-width: 142px;
     font-size: 1.3rem;
     line-height: 2rem;
     color: rgb(44, 44, 44);
@@ -35,122 +52,45 @@
     overflow: hidden;
 }
 
-.icon-right {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 8px;
-    font-size: 1.4rem;
-    line-height: 2rem;
-}
-
-.content {
-    position: absolute;
-    top: calc(100% + 10px);
-    left: 0;
-    right: 0;
-}
-.address-item {
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-    border-radius: 6px;
-    box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 4px;
-    cursor: pointer;
-    padding: 12px 12px;
-}
-
-.province {
-    width: 100%;
-}
-
-.district {
-    margin-top: 8px;
-}
-
-.address-input-wrapper {
-    display: flex;
-    width: 100%;
-
-    flex-direction: column;
-    position: relative;
-    .input {
-        height: 32px;
-        color: #000;
-        width: 100%;
-        padding: 6px 40px 6px 12px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-        font-size: 1.4rem;
-        line-height: 2rem;
-        font-family: Lexend;
-        cursor: pointer;
-
-        &:hover,
-        &:focus {
-            border: 1px solid #000;
-        }
-    }
-    .disabled {
-        &:hover,
-        &:focus {
-            border: 1px solid #ccc;
-        }
-    }
-    .icon {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        right: 12px;
-        margin-top: 2px;
-        font-size: 1.4rem;
-        line-height: 2rem;
-    }
-    .address-items {
-        position: absolute;
-        top: calc(100% + 8px);
-        left: 0;
-        right: 0;
-        padding: 6px 0;
-        background-color: #fff;
-        border-radius: 4px;
-        box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 4px;
-        z-index: 10;
-        max-height: 140px;
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: rgb(204, 204, 204) transparent;
-        cursor: pointer;
-
-        .item {
-            display: block;
-            width: 100%;
-            font-family: Lexend;
-            font-size: 1.4rem;
-            line-height: 2rem;
-            padding: 6px 12px;
-            user-select: none;
-            &:hover {
-                background-color: #f3f3f3;
-            }
-        }
-    }
-}
-
-.title {
+.icon-clear {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     line-height: 2rem;
-    color: rgb(44, 44, 44);
-    margin-bottom: 8px;
-    font-weight: 500;
-    user-select: none;
+    margin-right: 12px;
+    color: #ccc;
 }
-.asterisk-icon {
-    font-size: 1rem;
-    margin-bottom: 4px;
-    margin-left: 4px;
-    color: var(--primary);
+.right {
+    display: flex;
+    align-items: center;
+}
+.icon-right {
+    display: flex;
+    align-items: center;
+    font-size: 1.4rem;
+    line-height: 2rem;
+    margin-right: 12px;
+}
+
+.address-items {
+    border-radius: 4px;
+    z-index: 10;
+    max-height: 140px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(204, 204, 204) transparent;
+    cursor: pointer;
+
+    .item {
+        display: block;
+        width: 100%;
+        font-family: Lexend;
+        font-size: 1.4rem;
+        line-height: 2rem;
+        padding: 6px 12px;
+        user-select: none;
+        &:hover {
+            background-color: #f3f3f3;
+        }
+    }
 }

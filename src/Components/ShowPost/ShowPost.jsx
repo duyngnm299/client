@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './ShowPost.module.scss';
-import { getUser, SearchFilterPost } from '~/api';
+import {
+    getUser,
+    SearchFilterPost,
+    updateExpiredPost,
+    updatePost,
+} from '~/api';
 import { Link } from 'react-router-dom';
 import config from '~/config';
 import { useDispatch, useSelector } from 'react-redux';
@@ -38,23 +43,61 @@ function ShowPost() {
         dispatch(currentDistrict(null));
         dispatch(priceRange(null));
         dispatch(areaRange(null));
-
-        SearchFilterPost(`type=Tin nổi bật`)
+        if (currentUser?._id) {
+            getUser(currentUser._id).then((res) => {
+                res?.user?.savedPost.filter((item) =>
+                    setSavePost({ ...savePost, [item._id]: true }),
+                );
+            });
+        }
+        SearchFilterPost(`type=Tin nổi bật&status=approved`)
             .then((res) => {
                 console.log(res.pagination);
                 setTotalPage(Math.ceil(res?.pagination?.total / limit));
                 setAllPost(res?.post);
-                if (currentUser?._id) {
-                    getUser(currentUser._id).then((res) => {
-                        res?.user?.savedPost.filter((item) =>
-                            setSavePost({ ...savePost, [item._id]: true }),
-                        );
-                    });
-                }
             })
             .catch((err) => console.log(err));
     }, []);
-
+    useEffect(() => {
+        SearchFilterPost().then((res) =>
+            res.post.map((item) => {
+                let check = checkExpiredDate(item.endDate);
+                if (check) {
+                    const data = {
+                        status: 'expired',
+                    };
+                    updateExpiredPost(item._id, data).then(console.log(res));
+                }
+            }),
+        );
+    }, []);
+    const date = new Date();
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    const checkExpiredDate = (endDate) => {
+        const arr = endDate.split('/');
+        const d = parseInt(arr[0]);
+        const m = parseInt(arr[1]);
+        const y = parseInt(arr[2]);
+        console.log(day - d);
+        if (year === y) {
+            if (month === m) {
+                if (day - d > 0) {
+                    return true;
+                }
+                if (day - d <= 0) {
+                    return false;
+                }
+            }
+            if (month > m) {
+                return true;
+            }
+        }
+        if (year < y) {
+            return false;
+        }
+    };
     const handleOnClick = (item) => {
         dispatch(currentPost(item));
     };

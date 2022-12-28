@@ -3,14 +3,17 @@
 }
 
 .info {
-    width: 543px;
+    width: 700px;
     max-width: 100%;
     display: flex;
     flex-direction: column;
     max-height: calc(100vh - var(--default-layout-header-height));
-    margin-right: 300px;
+    margin-right: 330px;
 }
 
+.edit-info {
+    margin-right: 0;
+}
 .basic-info {
     padding: 24px;
     background-color: #fff;
@@ -153,7 +156,6 @@
         line-height: 2rem;
         font-family: Lexend;
         cursor: pointer;
-
         &:hover,
         &:focus {
             border: 1px solid #000;
@@ -620,6 +622,11 @@ input[type='number'] {
     border-radius: 4px;
     margin-right: 0;
 }
+.btn-update {
+    width: 100%;
+    border-radius: 4px;
+    margin-right: 0;
+}
 
 .validate {
     height: 20px;
@@ -665,7 +672,7 @@ input[type='number'] {
     max-height: calc(100vh - var(--default-layout-header-height));
     top: 8px;
     bottom: 0px;
-    right: 170px;
+    right: 110px;
     overflow: auto;
     scrollbar-width: none;
 }
@@ -812,6 +819,8 @@ input[type='number'] {
     font-family: Lexend;
 }
 .disabled {
+    color: rgb(118, 118, 118);
+
     &:hover,
     &:focus {
         border: 1px solid #ccc;

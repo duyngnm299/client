@@ -26,7 +26,6 @@ import {
     loginSuccess,
     registerFailed,
     registerStart,
-    registerSuccess,
 } from '~/redux/slice/authSlice';
 
 const cx = classNames.bind(styles);
@@ -43,7 +42,6 @@ function Register() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [message, setMessage] = useState(false);
-    const [showSuccessNotify, setShowSuccessNotify] = useState(false);
 
     const [showModal, setShowModal] = useState(false);
     const [verifyCode, setVerifyCode] = useState('');

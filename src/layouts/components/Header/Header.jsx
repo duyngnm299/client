@@ -51,7 +51,7 @@ function Header() {
             });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
+    console.log(savedItem);
     useEffect(() => {
         currentUser &&
             getUser(currentUser?._id).then((res) => {

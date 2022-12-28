@@ -23,10 +23,12 @@ const postMngItems = {
         {
             text: 'Đăng mới',
             to: config.routes.post,
+            disp: currentMenu('new_post'),
         },
         {
             text: 'Danh sách tin đăng',
             to: config.routes.postlist,
+            disp: currentMenu('post_list'),
         },
     ],
 };
@@ -113,6 +115,40 @@ function Sidebar(checked) {
     const updatedUser = useSelector(
         (state) => state.auth.update?.currentUser?.user,
     );
+    useEffect(() => {
+        if (crMenu === 'new_post') {
+            setPostMngIndex(0);
+            setInfoMngIndex(-1);
+            setFinancialMngIndex(-1);
+            setUtilityMngIndex(-1);
+            setCostsMngIndex(-1);
+            return;
+        }
+        if (crMenu === 'post_list') {
+            setPostMngIndex(1);
+            setInfoMngIndex(-1);
+            setFinancialMngIndex(-1);
+            setUtilityMngIndex(-1);
+            setCostsMngIndex(-1);
+            return;
+        }
+        if (crMenu === 'change_profile') {
+            setInfoMngIndex(0);
+            setPostMngIndex(-1);
+            setFinancialMngIndex(-1);
+            setUtilityMngIndex(-1);
+            setCostsMngIndex(-1);
+            return;
+        }
+        if (crMenu === 'change_password') {
+            setInfoMngIndex(1);
+            setPostMngIndex(-1);
+            setFinancialMngIndex(-1);
+            setUtilityMngIndex(-1);
+            setCostsMngIndex(-1);
+            return;
+        }
+    }, [crMenu]);
     console.log(crMenu);
     // useEffect(() => {
     //     setBalance(currentUser?.balance);
@@ -228,6 +264,7 @@ function Sidebar(checked) {
                                         postMngIndex === index && 'active',
                                     )}
                                     onClick={() => {
+                                        dispatch(item.disp);
                                         setInfoMngIndex(-1);
                                         setFinancialMngIndex(-1);
                                         setUtilityMngIndex(-1);
